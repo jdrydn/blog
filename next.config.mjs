@@ -1,6 +1,6 @@
-import rehypePrism from '@mapbox/rehype-prism'
 import nextMDX from '@next/mdx'
 import remarkGfm from 'remark-gfm'
+import rehypePrettyCode from 'rehype-pretty-code'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -21,7 +21,10 @@ const withMDX = nextMDX({
   extension: /\.mdx?$/,
   options: {
     remarkPlugins: [remarkGfm],
-    rehypePlugins: [rehypePrism],
+    rehypePlugins: [
+      // Highlight code blocks with Shiki
+      [rehypePrettyCode, { themes: { light: 'github-dark', dark: 'github-dark' } }]
+    ],
   },
 })
 

@@ -5,8 +5,6 @@ import { Layout } from '@/components/Layout'
 
 import '@/styles/tailwind.css'
 
-export const dynamic = 'force-static'
-
 export const metadata: Metadata = {
   title: {
     template: '%s - Spencer Sharp',

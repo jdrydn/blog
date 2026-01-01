@@ -1,11 +1,8 @@
-'use client'
-
 import Link from 'next/link'
 
 import { Container } from '@/components/Container'
-import { Prose } from '@/components/Prose'
-import type { Post } from '@/lib/posts'
 import { formatDate } from '@/lib/formatDate'
+import type { Post } from '@/lib/posts'
 
 function ArrowLeftIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -47,9 +44,9 @@ export function ArticleLayout({
                 </time>
               )}
             </header>
-            <Prose data-mdx-content>
+            <div className="prose dark:prose-invert">
               {children}
-            </Prose>
+            </div>
           </article>
         </div>
       </div>
