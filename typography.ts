@@ -82,9 +82,15 @@ export default {
           },
 
           // Headings
-          'h2, h3': {
+          'h1, h2, h3': {
             color: 'var(--tw-prose-headings)',
             fontWeight: theme('fontWeight.semibold'),
+          },
+          h1: {
+            fontSize: theme('fontSize.4xl')[0],
+            lineHeight: theme('lineHeight.9'),
+            marginTop: theme('spacing.20'),
+            marginBottom: theme('spacing.4'),
           },
           h2: {
             fontSize: theme('fontSize.xl')[0],
@@ -98,7 +104,10 @@ export default {
             marginTop: theme('spacing.16'),
             marginBottom: theme('spacing.4'),
           },
-          ':is(h2, h3) + *': {
+          ':first-child:is(h1, h2, h3, h4, h5, h6)': {
+            marginTop: theme('spacing.5'),
+          },
+          ':is(h1, h2, h3) + *': {
             marginTop: 0,
           },
 

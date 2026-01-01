@@ -20,7 +20,7 @@ import image2 from '@/images/photos/image-2.jpg'
 import image3 from '@/images/photos/image-3.jpg'
 import image4 from '@/images/photos/image-4.jpg'
 import image5 from '@/images/photos/image-5.jpg'
-import { type ArticleWithSlug, getAllArticles } from '@/lib/articles'
+import { getAllPosts, type Post } from '@/lib/posts'
 import { formatDate } from '@/lib/formatDate'
 
 function MailIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
@@ -82,16 +82,16 @@ function ArrowDownIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   )
 }
 
-function Article({ article }: { article: ArticleWithSlug }) {
+function Article({ post, slug, date }: { post?: Post, slug: string, date: Date }) {
   return (
     <Card as="article">
-      <Card.Title href={`/posts/${article.slug}`}>
-        {article.title}
+      <Card.Title href={`/posts/${slug}`}>
+        {post?.title}
       </Card.Title>
-      <Card.Eyebrow as="time" dateTime={article.date} decorate>
-        {formatDate(article.date)}
+      <Card.Eyebrow as="time" dateTime={date.toISOString()} decorate>
+        {formatDate(date.toISOString())}
       </Card.Eyebrow>
-      <Card.Description>{article.description}</Card.Description>
+      <Card.Description>{post?.description}</Card.Description>
       <Card.Cta>Read article</Card.Cta>
     </Card>
   )
@@ -270,7 +270,7 @@ function Photos() {
 }
 
 export default async function Home() {
-  let articles = (await getAllArticles()).slice(0, 4)
+  const items = (await getAllPosts()).slice(0, 5)
 
   return (
     <>
@@ -309,8 +309,8 @@ export default async function Home() {
       <Container className="mt-24 md:mt-28">
         <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
           <div className="flex flex-col gap-16">
-            {articles.map((article) => (
-              <Article key={article.slug} article={article} />
+            {items.map(({ post, slug, date }) => (
+              <Article key={slug} {...{ post, slug, date }} />
             ))}
           </div>
           <div className="space-y-10 lg:pl-16 xl:pl-24">

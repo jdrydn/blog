@@ -9,6 +9,9 @@ const nextConfig = {
   outputFileTracingIncludes: {
     '/articles/*': ['./src/app/articles/**/*.mdx'],
   },
+  env: {
+    TZ: 'UTC',
+  },
   images: {
     unoptimized: true,
   },
