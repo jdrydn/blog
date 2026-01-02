@@ -73,8 +73,8 @@ export default {
           color: 'var(--tw-prose-body)',
           lineHeight: theme('lineHeight.7'),
           '> *': {
-            marginTop: theme('spacing.10'),
-            marginBottom: theme('spacing.10'),
+            marginTop: theme('spacing.5'),
+            marginBottom: theme('spacing.5'),
           },
           p: {
             marginTop: theme('spacing.7'),
@@ -89,20 +89,17 @@ export default {
           h1: {
             fontSize: theme('fontSize.4xl')[0],
             lineHeight: theme('lineHeight.9'),
-            marginTop: theme('spacing.20'),
-            marginBottom: theme('spacing.4'),
+            marginTop: theme('spacing.10'),
           },
           h2: {
             fontSize: theme('fontSize.xl')[0],
             lineHeight: theme('lineHeight.7'),
-            marginTop: theme('spacing.20'),
-            marginBottom: theme('spacing.4'),
+            marginTop: theme('spacing.10'),
           },
           h3: {
             fontSize: theme('fontSize.base')[0],
             lineHeight: theme('lineHeight.7'),
-            marginTop: theme('spacing.16'),
-            marginBottom: theme('spacing.4'),
+            marginTop: theme('spacing.10'),
           },
           ':first-child:is(h1, h2, h3, h4, h5, h6)': {
             marginTop: theme('spacing.5'),
@@ -113,7 +110,7 @@ export default {
 
           // Images
           img: {
-            borderRadius: theme('borderRadius.3xl'),
+            borderRadius: theme('borderRadius.lg'),
           },
 
           // Inline elements
@@ -228,8 +225,8 @@ export default {
 
           // Horizontal rules
           hr: {
-            marginTop: theme('spacing.20'),
-            marginBottom: theme('spacing.20'),
+            marginTop: theme('spacing.5'),
+            marginBottom: theme('spacing.5'),
             borderTopWidth: '1px',
             borderColor: 'var(--tw-prose-hr)',
             '@screen lg': {

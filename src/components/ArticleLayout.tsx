@@ -37,7 +37,7 @@ export function ArticleLayout({
               {post.date && (
                 <time className="order-first flex items-center text-base text-zinc-400" dateTime={post.date.toISOString()}>
                   <span className="h-4 w-0.5 rounded-full bg-zinc-200" />
-                  <span className="ml-3">{formatDate(post.date.toISOString())}</span>
+                  <span className="ml-3">{formatDate(post.date)}</span>
                 </time>
               )}
             </header>

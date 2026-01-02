@@ -59,7 +59,7 @@ function Article({ post, slug, date }: { post?: Post, slug: string, date: Date }
         {post?.title}
       </Card.Title>
       <Card.Eyebrow as="time" dateTime={date.toISOString()} decorate>
-        {formatDate(date.toISOString())}
+        {formatDate(date)}
       </Card.Eyebrow>
       <Card.Description>{post?.description}</Card.Description>
       <Card.Cta>Read article</Card.Cta>
