@@ -1,8 +1,10 @@
+import Link from 'next/link'
 import Image from 'next/image'
 import { onlyText } from 'react-children-utilities'
 
 import { Container } from '@/components/Container'
 import { Badge } from '@/components/Badges'
+import { ArrowLeftIcon } from '@/components/Icons'
 
 import homepageImage from './muzmatch-homepage.png'
 
@@ -23,10 +25,19 @@ export default function Uses() {
   return (
     <Container className="mt-8">
       <header className="max-w-2xl">
-        <Image src="/logos/muzmatch.jpg" alt="Car Throttle logo" className="my-3 rounded-xl" height={80} width={80} />
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-800 sm:text-4xl">
-          muzmatch
-        </h1>
+        <div className="flex flex-row justify-start items-center gap-x-3">
+          <Link
+            href="/"
+            aria-label="Go back to home"
+            className="flex group h-10 w-10 items-center justify-center rounded-full bg-white shadow-md ring-1 shadow-zinc-800/5 ring-zinc-900/5"
+          >
+            <ArrowLeftIcon className="h-4 w-4 stroke-zinc-500 transition group-hover:stroke-zinc-700" />
+          </Link>
+          <Image src="/logos/muzmatch.jpg" alt="muzmatch logo" className="my-3 rounded-xl h-10 w-10" height={50} width={50} />
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-800 sm:text-4xl">
+            muzmatch
+          </h1>
+        </div>
         <p className="mt-6 text-base font-bold text-zinc-600">
           (2017 → 2018) Senior Backend Engineer
         </p>
