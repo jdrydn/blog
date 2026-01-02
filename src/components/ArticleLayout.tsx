@@ -28,10 +28,19 @@ export function ArticleLayout({
     <Container className="mt-16 lg:mt-32">
       <div className="xl:relative">
         <div className="mx-auto max-w-2xl">
+          <noscript>
+            <p className="my-6 text-base text-zinc-600">
+              <code>
+                Some features on this site rely on JavaScript,
+                which doesn't appear to be enabled,
+                so parts of the site may not work as expected.
+              </code>
+            </p>
+          </noscript>
           <Link
             href="/posts"
             aria-label="Go back to articles"
-            className="group mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md ring-1 shadow-zinc-800/5 ring-zinc-900/5 transition lg:absolute lg:-left-5 lg:-mt-2 lg:mb-0 xl:-top-1.5 xl:left-0 xl:mt-0"
+            className="group mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md ring-1 shadow-zinc-800/5 ring-zinc-900/5 transition lg:absolute lg:my-0 lg:-top-1.5 lg:left-0"
           >
             <ArrowLeftIcon className="h-4 w-4 stroke-zinc-500 transition group-hover:stroke-zinc-700" />
           </Link>

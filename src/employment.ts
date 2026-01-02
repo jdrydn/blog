@@ -1,11 +1,11 @@
-import type { ImageProps } from 'next/image';
+import type { ImageProps } from 'next/image'
 
 export interface Role {
-  company: string;
-  title: string;
-  url: string;
-  logo: ImageProps['src'];
-  between: [string, string];
+  company: string
+  title: string
+  url: string
+  logo: ImageProps['src']
+  between: [string, string]
 }
 
 export const employment: Array<Role> = [
@@ -40,15 +40,15 @@ export const employment: Array<Role> = [
   {
     company: 'Car Throttle',
     title: 'Senior Engineer',
-    url: 'https://www.carthrottle.com',
+    url: '/employment/car-throttle',
     logo: '/logos/car-throttle.jpg',
     between: ['2015', '2017'],
   },
   {
     company: 'Mindwork Labs',
     title: 'Junior Developer / Senior Developer',
-    url: 'https://www.myvouchercodes.com',
+    url: '/employment/mindwork-labs',
     logo: '/logos/mindworklabs.png',
     between: ['2012', '2014'],
   },
-];
+]

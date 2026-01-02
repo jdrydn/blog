@@ -1,23 +1,20 @@
 import { type Metadata } from 'next'
 
-import { Providers } from '@/app/providers'
 import { Layout } from '@/components/Layout'
 
 import '@/style.css'
 
 export const metadata: Metadata = {
   title: {
-    template: '%s - Spencer Sharp',
-    default:
-      'Spencer Sharp - Software designer, founder, and amateur astronaut',
+    template: '%s - jdrydn',
+    default: 'jdrydn',
   },
-  description:
-    'I’m Spencer, a software designer and entrepreneur based in New York City. I’m the founder and CEO of Planetaria, where we develop technologies that empower regular people to explore space on their own terms.',
-  alternates: {
-    types: {
-      'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/feed.xml`,
-    },
-  },
+  description: 'Engineer at heart, found working on products, projects, microservices & APIs in Node.js, familiar with databases, templating, testing & devops.',
+  // alternates: {
+  //   types: {
+  //     'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/feed.xml`,
+  //   },
+  // },
 }
 
 export default function RootLayout({
@@ -27,12 +24,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+      </head>
       <body className="flex h-full bg-zinc-50">
-        <Providers>
-          <div className="flex w-full">
-            <Layout>{children}</Layout>
-          </div>
-        </Providers>
+        <div className="flex w-full">
+          <Layout>{children}</Layout>
+        </div>
       </body>
     </html>
   )

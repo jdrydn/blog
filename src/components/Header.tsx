@@ -3,13 +3,21 @@ import Image from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
 
-import avatarImage from '@/images/avatar.jpg'
-import {
-  GitHubIcon,
-  InstagramIcon,
-  LinkedInIcon,
-  ThreadsIcon,
-} from '@/components/SocialIcons'
+import useObscuredValue from '@/hooks/obscure-value'
+
+import avatarImage from '@/images/avatar.png'
+import { GitHubIcon, LinkedInIcon, ThreadsIcon } from '@/components/SocialIcons'
+
+function MailIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path
+        fillRule="evenodd"
+        d="M6 5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H6Zm.245 2.187a.75.75 0 0 0-.99 1.126l6.25 5.5a.75.75 0 0 0 .99 0l6.25-5.5a.75.75 0 0 0-.99-1.126L12 12.251 6.245 7.187Z"
+      />
+    </svg>
+  )
+}
 
 function SocialLink({
   className = 'h-6 w-6',
@@ -55,6 +63,13 @@ function Avatar({
 }
 
 export function Header() {
+  const emailHref = useObscuredValue([
+    ['#this', 'mailto:'],
+    ['-is', 'james'],
+    ['-the', '@'],
+    ['-way', 'jdrydn.com'],
+  ])
+
   return (
     <header
       className="pointer-events-none relative z-50 flex flex-none flex-col"
@@ -79,16 +94,16 @@ export function Header() {
                     icon={ThreadsIcon} />
                   <SocialLink
                     href="#"
-                    aria-label="Follow on Instagram"
-                    icon={InstagramIcon} />
-                  <SocialLink
-                    href="#"
                     aria-label="Follow on GitHub"
                     icon={GitHubIcon} />
                   <SocialLink
                     href="#"
                     aria-label="Follow on LinkedIn"
                     icon={LinkedInIcon} />
+                  <SocialLink
+                    href={emailHref}
+                    aria-label="Email me"
+                    icon={MailIcon} />
                 </div>
               </nav>
             </div>
