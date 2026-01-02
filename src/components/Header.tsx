@@ -3,9 +3,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
 
-import useObscuredValue from '@/hooks/obscure-value'
-
 import avatarImage from '@/images/avatar.png'
+import links from '@/links'
+import useObscuredValue from '@/hooks/obscure-value'
 import { GitHubIcon, LinkedInIcon, ThreadsIcon } from '@/components/SocialIcons'
 
 function MailIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
@@ -89,16 +89,19 @@ export function Header() {
                 <div className="flex items-center gap-6 text-sm font-medium text-zinc-800">
                   <SocialLink
                     className="h-5 w-5"
-                    href="#"
                     aria-label="Follow on Threads"
+                    href={links.threads}
+                    target="_blank"
                     icon={ThreadsIcon} />
                   <SocialLink
-                    href="#"
                     aria-label="Follow on GitHub"
+                    href={links.github}
+                    target="_blank"
                     icon={GitHubIcon} />
                   <SocialLink
-                    href="#"
                     aria-label="Follow on LinkedIn"
+                    href={links.linkedin}
+                    target="_blank"
                     icon={LinkedInIcon} />
                   <SocialLink
                     href={emailHref}

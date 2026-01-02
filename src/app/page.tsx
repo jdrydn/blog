@@ -39,6 +39,19 @@ function BriefcaseIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   )
 }
 
+function ChevronRightIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M6.75 5.75 9.25 8l-2.5 2.25"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 function Article({ post, slug, date }: { post?: Post, slug: string, date: Date }) {
   return (
     <Card as="article">
@@ -176,6 +189,15 @@ export default async function Home() {
             {items.map(({ post, slug, date }) => (
               <Article key={slug} {...{ post, slug, date }} />
             ))}
+            <div className="group relative flex flex-col items-end">
+              <Link
+                className="relative z-10 mt-4 flex items-center text-sm font-medium text-teal-500"
+                href="/posts"
+              >
+                Read more
+                <ChevronRightIcon className="ml-1 h-4 w-4 stroke-current" />
+              </Link>
+            </div>
           </div>
           <div className="space-y-10 lg:pl-16 xl:pl-24">
             <Resume />

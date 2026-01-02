@@ -33,7 +33,7 @@ export const employment: Array<Role> = [
   {
     company: 'muzmatch',
     title: 'Senior Backend Engineer',
-    url: 'https://muzz.com',
+    url: '/employment/muzmatch',
     logo: '/logos/muzmatch.jpg',
     between: ['2017', '2018'],
   },

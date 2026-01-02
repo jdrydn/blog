@@ -1,18 +1,23 @@
 import Image from 'next/image'
+import { onlyText } from 'react-children-utilities'
 
 import { Container } from '@/components/Container'
 import { Badge } from '@/components/Badges'
 
 import homepageImage from './mindwork-labs-homepage.png'
 
+const description = (
+  <p>
+    <strong>Mindwork Labs</strong> was my first developer role back when I was at University. I worked here for a summer
+    & was fortunate enough to return for my year-in-industry placement. During my time here, I was working across the
+    full-stack to build community features & services to support visitors, building alongside some of the brightest
+    minds in software development.
+  </p>
+)
+
 export const metadata = {
-  title: 'Mindwork Labs (2012-2014)',
-  description: (a => a.join(' '))([
-    'This was my first developer role back when I was at University.',
-    'I worked here for a summer & was fortunate enough to return for my year-in-industry placement.',
-    'During my time here, I was working across the full-stack to build community features & services to support',
-    'visitors, building alongside some of the brightest minds in software development.'
-  ]),
+  title: 'Mindwork Labs (2012 → 2014)',
+  description: onlyText(description),
 }
 
 export default function Uses() {
@@ -24,7 +29,7 @@ export default function Uses() {
           Mindwork Labs
         </h1>
         <p className="mt-6 text-base font-bold text-zinc-600">
-          (2012 - 2014) Junior Developer / Senior Developer
+          (2012 → 2014) Junior Developer / Senior Developer
         </p>
       </header>
       <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12">
@@ -34,13 +39,13 @@ export default function Uses() {
               src={homepageImage}
               alt="Mindwork Labs homepage"
               sizes="(min-width: 1024px) 32rem, 20rem"
-              className="aspect-square rounded-xl bg-zinc-100 object-cover"
+              className="aspect-square rounded bg-zinc-100 object-cover"
             />
           </div>
         </div>
         <div className="lg:order-first lg:row-span-2">
           <div className="space-y-7 text-base text-zinc-600 my-3 lg:my-6">
-            <p>{metadata.description}</p>
+            {description}
             <ul className="list-disc pl-4">
               <li>University industry placement, hired after a hackathon back in 2012.</li>
               <li>Learning production-grade full-stack development, building user-facing features & staff tools.</li>

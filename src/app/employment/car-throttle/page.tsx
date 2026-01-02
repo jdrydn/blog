@@ -1,19 +1,25 @@
 import Image from 'next/image'
+import { onlyText } from 'react-children-utilities'
 
 import { Container } from '@/components/Container'
 import { Badge } from '@/components/Badges'
 
 import homepageImage from './car-throttle-homepage.png'
 
+const description = (
+  <p>
+    <strong>Car Throttle</strong> was "the internet's car community" - what started as a Wordpress site evolved into a
+    social-media~like platform where car enthusiasts would post content about their cars, about car shows & similar.
+    I worked primarily on rebuilding the legacy PHP monolith into a shiny (then new) Node.js application,
+    building out an independent API "microservice" to power a new progressive web-app & set of mobile applications.
+    I also helped build out a custom CMS backed by our API, and helped assemble a small suite of staff tools for
+    the content creators.
+  </p>
+)
+
 export const metadata = {
-  title: 'Car Throttle (2014 - 2017)',
-  description: (a => a.join(' '))([
-    'This was my first full-time developer role back after I finished University.',
-    'I worked primarily on rebuilding the legacy PHP monolith into a shiny (then new) Node.js application,',
-    'building out an independent API "microservice" to power a new progressive web-app & set of mobile applications.',
-    'I also helped build out a custom CMS backed by our API, and helped assemble a small suite of staff tools for',
-    'the content creators.'
-  ]),
+  title: 'Car Throttle (2015 → 2017)',
+  description: onlyText(description),
 }
 
 export default function Uses() {
@@ -25,7 +31,7 @@ export default function Uses() {
           Car Throttle
         </h1>
         <p className="mt-6 text-base font-bold text-zinc-600">
-          (2014 - 2017) Software Engineer / Senior Software Engineer
+          (2015 → 2017) Software Engineer / Senior Software Engineer
         </p>
       </header>
       <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12">
@@ -33,9 +39,9 @@ export default function Uses() {
           <div className="max-w-xs mt-6 px-2.5 lg:max-w-none lg:mt-0">
             <Image
               src={homepageImage}
-              alt="Mindwork Labs homepage"
+              alt="Car Throttle homepage (2017)"
               sizes="(min-width: 1024px) 32rem, 20rem"
-              className="aspect-square rounded-xl bg-zinc-100 object-cover"
+              className="aspect-square rounded bg-zinc-100 object-cover"
             />
           </div>
         </div>
@@ -61,7 +67,6 @@ export default function Uses() {
             <Badge variant="red">Redis</Badge>
             <Badge variant="purple">ElasticSearch</Badge>
             <Badge variant="orange">AWS</Badge>
-            <Badge variant="gray">Linux</Badge>
           </div>
         </div>
       </div>

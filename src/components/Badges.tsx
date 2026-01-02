@@ -22,7 +22,7 @@ export function Badge({
   children: ReactNode | undefined
 }) {
   const className = clsx(
-    'flex items-center space-x-2.5 border rounded-full px-3 py-1 text-sm',
+    'inline-flex items-center space-x-2.5 border rounded-full px-3 py-1 text-sm',
     variant ? variantStyles[variant] : variantStyles.gray,
   )
   return (
