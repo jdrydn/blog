@@ -1,0 +1,130 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+import formatTweetImg from './formatTweet.png'
+import streamImg from './stream.png'
+import tweetieImg from './tweetie.png'
+
+export const post = {
+  title: 'Advice with Chris',
+  description: 'So I was looking for a way to teach myself NodeJS and MongoDB, so I decided to write an API for an “advice engine”, somewhere to store quotes and display them on a lovely website.',
+  date: new Date('2013-05-15'),
+}
+
+export const metadata = {
+  title: post.title,
+  description: post.description,
+}
+
+export default (props) => <ArticleLayout post={post} {...props} />
+
+# Advice with Chris 💬
+
+> This article was originally posted on **Medium**.
+
+## An advice engine powered by Node & Mongo.
+
+So I was looking for a way to teach myself NodeJS and MongoDB, so I decided to write an API for an “*advice engine*”, somewhere to store quotes and display them on a lovely website.
+
+A friend from University loves giving advice. Sometimes it's genuinely good advice, but most of the time it's incredibly funny/sarcastic advice. So I wanted an easy way for my friends to add new quotes via the platform of our choice (Twitter), and a website where quotes could be showcased and displayed.
+
+This website would need an API to harvest tweets with content, which would be built in NodeJS backed a MongoDB database, and the website would be a simple HTML5+JS page. No need to touch PHP!
+
+## Express & Mongoose
+
+Two frameworks that made this possible:
+
+[ExpressJS](http://expressjs.com/)
+
+> web application framework for node
+>
+
+Express makes handling HTTP requests in Node extremely simple, and has helped me pick up Node & it's core concepts very quickly. If you've not looked at Express (or Node) at all, I strongly recommend you read [the Express Getting-Started Guide](http://expressjs.com/guide.html) :)
+
+And [Mongoose](http://mongoosejs.com/)
+
+> elegant mongodb object modeling for node.js
+>
+
+And that's exactly what it is! There's also a [fantastic Getting-Started guide](http://mongoosejs.com/docs/index.html) for Mongoose too! Thanks to Mongoose I've got an excellent data structure for these quotes, easy input and output, some excellent pre & post *save* hooks for timestamping, randomising and tweeting the quote when a new quote is added. All of which are in contained in a simple [*models.js*](https://github.com/jdrydn/advicefromchris/blob/15add83db65bf599324c9b8687fbbb5f5f661524/models.js).
+
+## Moment
+
+Whilst looking for a JavaScript solution to making Unix timestamps, I came across [Moment.JS](http://momentjs.com/):
+
+> A 5.5kb javascript date library for parsing, validating, manipulating, and formatting dates.
+>
+
+Moment is fantastic for parsing and displaying timestamps. It works in the browser and in Node, which makes it perfect for the frontend & the API!
+
+I want to take Moment with me for all future applications using timestamps. It's incredible effective and very efficient, and has a tiny footprint!
+
+## Tweetie
+
+<Image src={tweetieImg} alt={'Creating a module called "Tweetie"'} />
+
+I finally managed to kick my brain into gear and work out how [Twitter's Streaming APIs](https://dev.twitter.com/docs/streaming-apis) works.
+
+Using Twitter's Public Streaming API and a magical tracking keyword “***@AdviceFromChris***”, any tweet that mentions the account can be processed and turned into a valid quote.
+
+This makes Twitter an excellent source of content, and means any of my friends can add to this API by simply tweeting!
+
+## Filters - Authors
+
+Now, obviously I have some filters in place. Simple filters.
+
+<Image src={streamImg} alt="The userid check" />
+
+First set of filters control the author of the tweets. I only wanted my friends to be able to add to this (not anybody in the world) so an array of their IDs and a simple check is in place.
+
+## Filters - Content
+
+When the content comes in, I wanted to be able to process the content. Add quotation marks around it, if needed. But there were also some tweets I wanted to ignore, such as old-style RTs and replies.
+
+Old-style RTs are great ways that'll make the content dirty - I'm looking for content more like:
+
+> “Turn left at the roundabout, said no-one ever” @AdviceFromChris
+>
+
+Rather than:
+
+> RT @AdviceFromChris: “Turn left at the roundabout, said no-one ever”
+>
+
+Replies are much harder. They look like:
+
+> @AdviceFromChris Nice website dudes!
+>
+
+But what if someone is trying to send a quote this way? In order to get round this I'm insisting that replies have to be in quotations:
+
+> @AdviceFromChris “And yes, that is what she said.”
+>
+
+<Image src={formatTweetImg} alt="Introducing some crazy Regular Expressions" />
+
+So I needed some way to filter the text. Enter **regular expressions**.
+
+These may look complicated, but really they're a bunch of IF statements testing the content of the tweet, and seeing if it is valuable. If the content doesn't match, then this function will return *undefined* and the code where this is called knows that if the resulting text is *undefined* then ignore this tweet.
+
+## Forever
+
+Running Node servers involves leaving a shell running, controlling the script. Enter [**Forever**](https://github.com/nodejitsu/forever).
+
+> A simple CLI tool for ensuring that a given script runs continuously (i.e. forever)
+>
+
+This is really quite brilliant. It involves running a simple command to start running a script, it offers error logs and output logs (so you can monitor exactly what is going on with the server) and with [a little manipulation](https://github.com/jdrydn/advicefromchris/blob/39ce87029cdb75ce7768d2cebfc8732a18f22e50/runForever.sh) I've got Forever handling everything, including archiving logs to a timestamped folder to keep a record of everything!
+
+## So what have I actually learned building this advice engine?
+
+I've learned **NodeJS**, something I've wanted to learn for ages. I've also learned **MongoDB**, to a degree, and got my head around document-driven databases.
+
+I got a taste at using **Express** & **Mongoose** in a real project (and not some project [I knocked up at a hackathon](https://github.com/jdrydn/Angelhack2013/tree/master/api-node)!).
+
+I've also tackled **Twitter's Streaming API** - something I've always wanted to take on - and won. I really like the idea of using tweets as content (and not just relying on Twitter's Search API and searching for hashtags - this here is a more managed and more long-term solution).
+
+And I got a look at **Forever** - which I've now installed globally through *npm* and I'm using for other scripts that aren't Node-based!
+
+All of this code is on [the GitHub repo](https://github.com/jdrydn/advicefromchris) for this project - and the actual site showcasing quotes is located in the *gh-pages* branch, since I'm powering the frontend by HTML5, JavaScript & [GitHub Pages](http://pages.github.com/)!
+
+I'm kinda hoping that this project will inspire me to use Node.JS in more projects, over other languages I regularly use like PHP. I really like the idea of server-side JavaScript, and I really liked working on this project. It's been fun! ^_^

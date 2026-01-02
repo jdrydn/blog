@@ -18,7 +18,7 @@ function ListItem({ post, slug, date }: { post?: Post, slug: string, date: Date 
           className="md:hidden"
           decorate
         >
-          {formatDate(date.toISOString())}
+          {formatDate(date)}
         </Card.Eyebrow>
         <Card.Description>{post?.description}</Card.Description>
         <Card.Cta>Read article</Card.Cta>
@@ -28,7 +28,7 @@ function ListItem({ post, slug, date }: { post?: Post, slug: string, date: Date 
         dateTime={date.toISOString()}
         className="mt-1 max-md:hidden"
       >
-        {formatDate(date.toISOString())}
+        {formatDate(date)}
       </Card.Eyebrow>
     </article>
   )
