@@ -1,68 +1,28 @@
 'use client'
-
 import Image from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
 
-import { Container } from '@/components/Container'
 import avatarImage from '@/images/avatar.jpg'
 import {
   GitHubIcon,
   InstagramIcon,
   LinkedInIcon,
-  XIcon,
+  ThreadsIcon,
 } from '@/components/SocialIcons'
 
 function SocialLink({
+  className = 'h-6 w-6',
   icon: Icon,
   ...props
 }: React.ComponentPropsWithoutRef<typeof Link> & {
+  className?: string
   icon: React.ComponentType<{ className?: string }>
 }) {
   return (
-    <Link className="group -m-1 p-1" {...props}>
-      <Icon className="h-6 w-6 fill-zinc-500 transition group-hover:fill-zinc-600" />
+    <Link className="group p-1" {...props}>
+      <Icon className={`fill-zinc-500 transition group-hover:fill-zinc-600 ${className}`} />
     </Link>
-  )
-}
-
-function Navigation(props: React.ComponentPropsWithoutRef<'nav'>) {
-  return (
-    <nav {...props}>
-      <div className="flex flex-row gap-6">
-        <SocialLink href="#" aria-label="Follow on X" icon={XIcon} />
-        <SocialLink
-          href="#"
-          aria-label="Follow on Instagram"
-          icon={InstagramIcon}
-        />
-        <SocialLink
-          href="#"
-          aria-label="Follow on GitHub"
-          icon={GitHubIcon}
-        />
-        <SocialLink
-          href="#"
-          aria-label="Follow on LinkedIn"
-          icon={LinkedInIcon}
-        />
-      </div>
-    </nav>
-  )
-}
-
-function AvatarContainer({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<'div'>) {
-  return (
-    <div
-      className={clsx(
-        className,
-        'h-10 w-10 rounded-full bg-white/90 p-0.5 shadow-lg ring-1 shadow-zinc-800/5 ring-zinc-900/5 backdrop-blur-sm',
-      )}
-      {...props}
-    />
   )
 }
 
@@ -96,41 +56,45 @@ function Avatar({
 
 export function Header() {
   return (
-    <>
-      <header
-        className="pointer-events-none relative z-50 flex flex-none flex-col"
-        style={{
-          height: 'var(--header-height)',
-          marginBottom: 'var(--header-mb)',
-        }}
-      >
-        <div
-          className="top-0 z-10 h-16 pt-6"
-          style={{
-            position:
-              'var(--header-position)' as React.CSSProperties['position'],
-          }}
-        >
-          <Container
-            className="top-(--header-top,--spacing(6)) w-full"
-            style={{
-              position:
-                'var(--header-inner-position)' as React.CSSProperties['position'],
-            }}
-          >
-            <div className="relative flex gap-4">
-              <div className="flex flex-1">
-                <AvatarContainer>
-                  <Avatar />
-                </AvatarContainer>
-              </div>
-              <div className="flex flex-1 justify-end md:justify-center">
-                <Navigation className="pointer-events-auto" />
-              </div>
+    <header
+      className="pointer-events-none relative z-50 flex flex-none flex-col"
+      style={{
+        height: 'var(--header-height)',
+        marginBottom: 'var(--header-mb)',
+      }}
+    >
+      <div className="h-16 pt-6">
+        <div className="mx-auto w-full max-w-7xl lg:px-8">
+          <div className="relative flex gap-4 mx-5">
+            <div className="flex flex-1">
+              <Avatar />
             </div>
-          </Container>
+            <div className="flex flex-1 justify-end">
+              <nav className="pointer-events-auto">
+                <div className="flex items-center gap-6 text-sm font-medium text-zinc-800">
+                  <SocialLink
+                    className="h-5 w-5"
+                    href="#"
+                    aria-label="Follow on Threads"
+                    icon={ThreadsIcon} />
+                  <SocialLink
+                    href="#"
+                    aria-label="Follow on Instagram"
+                    icon={InstagramIcon} />
+                  <SocialLink
+                    href="#"
+                    aria-label="Follow on GitHub"
+                    icon={GitHubIcon} />
+                  <SocialLink
+                    href="#"
+                    aria-label="Follow on LinkedIn"
+                    icon={LinkedInIcon} />
+                </div>
+              </nav>
+            </div>
+          </div>
         </div>
-      </header>
-    </>
+      </div>
+    </header>
   )
 }

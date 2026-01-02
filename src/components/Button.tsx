@@ -8,6 +8,7 @@ const variantStyles = {
 
 type ButtonProps = {
   variant?: keyof typeof variantStyles
+  align?: 'start' | 'center' | 'end',
 } & (
   | (React.ComponentPropsWithoutRef<'button'> & { href?: undefined })
   | React.ComponentPropsWithoutRef<typeof Link>
@@ -15,11 +16,12 @@ type ButtonProps = {
 
 export function Button({
   variant = 'primary',
+  align = 'center',
   className,
   ...props
 }: ButtonProps) {
   className = clsx(
-    'inline-flex items-center gap-2 justify-center rounded-md py-2 px-3 text-sm outline-offset-2 transition active:transition-none',
+    `inline-flex items-center gap-2 justify-${align} rounded-md py-2 px-3 text-sm outline-offset-2 transition active:transition-none`,
     variantStyles[variant],
     className,
   )

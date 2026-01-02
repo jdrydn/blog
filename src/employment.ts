@@ -1,0 +1,54 @@
+import type { ImageProps } from 'next/image';
+
+export interface Role {
+  company: string;
+  title: string;
+  url: string;
+  logo: ImageProps['src'];
+  between: [string, string];
+}
+
+export const employment: Array<Role> = [
+  {
+    company: 'BPP Education Group',
+    title: 'Principal Software Engineer',
+    url: 'https://www.bpp.com',
+    logo: '/logos/bpp.jpeg',
+    between: ['2023', 'Present'],
+  },
+  {
+    company: 'Tech City Ventures',
+    title: 'Head of Technology',
+    url: 'https://www.crunchbase.com/organization/tech-city-ventures',
+    logo: '/logos/techcityventures.jpg',
+    between: ['2022', '2023'],
+  },
+  {
+    company: 'Real Links',
+    title: 'CTO / Lead Engineer',
+    url: 'https://www.reallinks.io',
+    logo: '/logos/real-links.jpeg',
+    between: ['2019', '2022'],
+  },
+  {
+    company: 'muzmatch',
+    title: 'Senior Backend Engineer',
+    url: 'https://muzz.com',
+    logo: '/logos/muzmatch.jpg',
+    between: ['2017', '2018'],
+  },
+  {
+    company: 'Car Throttle',
+    title: 'Senior Engineer',
+    url: 'https://www.carthrottle.com',
+    logo: '/logos/car-throttle.jpg',
+    between: ['2015', '2017'],
+  },
+  {
+    company: 'Mindwork Labs',
+    title: 'Junior Developer / Senior Developer',
+    url: 'https://www.myvouchercodes.com',
+    logo: '/logos/mindworklabs.png',
+    between: ['2012', '2014'],
+  },
+];
