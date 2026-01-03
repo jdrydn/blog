@@ -8,10 +8,13 @@ export interface Post {
   draft?: boolean
 }
 
+const DATE_PREFIX = /^(\d{4}-\d{2}-\d{2})/
+
 async function importPost(
   filename: string,
 ): Promise<{ post?: Post; slug: string; date: Date }> {
   const stat = await fs.stat(`./src/app/posts/${filename}`)
+  const dateMatch = filename.match(DATE_PREFIX)
 
   let { post } = (await import(`../app/posts/${filename}`)) as {
     default: unknown // React.ComponentType
@@ -20,7 +23,8 @@ async function importPost(
 
   return {
     post,
-    date: post?.date ?? stat.ctime,
+    date:
+      post?.date ?? (dateMatch ? new Date(dateMatch[1]) : null) ?? stat.ctime,
     slug: filename.replace(/(\/page)?\.mdx$/, ''),
   }
 }

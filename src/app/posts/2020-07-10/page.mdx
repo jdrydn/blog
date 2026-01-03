@@ -1,0 +1,29 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import { WebLinkPreview } from '@/components/WebLink'
+
+export const post = {
+  title: 'Facebook SDK strikes again!',
+  description: '(The Verge) A number of popular apps and services including Spotify, Pinterest, and Tinder were inaccessible today on iOS devices due to a now-resolved issue involving Facebook log-ins.',
+  date: new Date('2020-07-10'),
+}
+
+export const metadata = {
+  title: post.title,
+  description: post.description,
+}
+
+export default (props) => <ArticleLayout post={post} {...props} />
+
+# Facebook SDK strikes again!
+
+<WebLinkPreview
+  title="Spotify, Pinterest, Tinder, and other iOS apps were crashing again due to a Facebook issue"
+  description="A number of popular apps and services including Spotify, Pinterest, and Tinder were inaccessible today on iOS devices due to a now-resolved issue involving Facebook log-ins."
+  href="https://www.theverge.com/2020/7/10/21319784/ios-apps-crashing-spotify-tiktok-pinterest-tinder-facebook-sdk-certification-issue"
+  />
+
+> Facebook acknowledged on its developer platform this morning that its software was causing problems. “We are aware and investigating an increase in errors on the iOS SDK which is causing some apps to crash,” said the firm. In a GitHub thread posted around 7AM ET, numerous developers reported problems with their apps and blamed Facebook, too.
+
+> ... the root of the issue is that Facebook encourages developers to integrate its log-in services into their apps by offering them valuable insights about app usage and advertising in return.
+
+This is just mind-blowing! 🤯
