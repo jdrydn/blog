@@ -63,6 +63,8 @@ export async function WebLinkFetchBlock({
       href={href}
       title={title ?? preview?.title}
       description={description ?? preview?.description}
+      image={preview?.image ? { src: preview.image, alt: preview.title ?? '' } : undefined}
+      icon={preview?.favicon ? { src: preview.favicon, alt: preview.siteName ?? '' } : undefined}
       className={className} rel={rel} variant={variant} />
   )
 }
@@ -120,6 +122,8 @@ export function WebLinkPreviewBlock({
                 alt={icon.alt}
                 className="h-5 w-5 flex-none rounded-sm"
                 loading="lazy"
+                height={10}
+                width={10}
               />
             )}
 
@@ -137,6 +141,8 @@ export function WebLinkPreviewBlock({
               alt={image.alt}
               className="h-full w-full object-cover"
               loading="lazy"
+              height={200}
+              width={200}
             />
             {/* soften the seam like many embeds do */}
             <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white/70 to-transparent" />

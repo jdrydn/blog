@@ -7,8 +7,9 @@ export type LinkPreview = {
   url: string
   title?: string
   description?: string
-  image?: string
   siteName?: string
+  image?: string
+  favicon?: string
 }
 
 // tweak as you like
@@ -32,6 +33,40 @@ async function readCache(filePath: string, ttlMs: number) {
 async function writeCache(filePath: string, data: LinkPreview) {
   await fs.mkdir(path.dirname(filePath), { recursive: true })
   await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8')
+}
+
+function absolutize(href: string, baseUrl: string) {
+  try {
+    return new URL(href, baseUrl).toString()
+  } catch {
+    return undefined
+  }
+}
+
+function parseFavicon(html: string, pageUrl: string): string | undefined {
+  const candidates: string[] = []
+
+  const linkRe = /<link[^>]+rel=["']([^"']+)["'][^>]+href=["']([^"']+)["']/gi
+
+  let match: RegExpExecArray | null
+  while ((match = linkRe.exec(html))) {
+    const rel = match[1].toLowerCase()
+    const href = match[2]
+
+    if (rel.includes('icon') || rel.includes('apple-touch-icon')) {
+      const abs = absolutize(href, pageUrl)
+      if (abs) candidates.push(abs)
+    }
+  }
+
+  if (candidates.length > 0) return candidates[0]
+
+  try {
+    const u = new URL(pageUrl)
+    return `${u.origin}/favicon.ico`
+  } catch {
+    return undefined
+  }
 }
 
 /**
@@ -60,12 +95,15 @@ function parsePreview(html: string, url: string): LinkPreview {
     /<meta[^>]+property=["']og:site_name["'][^>]+content=["']([^"']+)["']/i,
   )
 
+  const favicon = parseFavicon(html, url)
+
   return {
     url,
     title: ogTitle ?? titleTag,
     description: ogDesc ?? metaDesc,
-    image: ogImage,
     siteName: ogSite,
+    image: ogImage,
+    favicon,
   }
 }
 

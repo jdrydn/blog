@@ -1,8 +1,9 @@
 import { ArticleLayout } from '@/components/ArticleLayout'
+import { WebLinkFetchBlock } from '@/components/WebLink'
 
 export const post = {
   title: 'Razer introduces Project Linda',
-  description: '"The Motorola Atrix Lapdock strikes back" - imagine a portable laptop shell that you run off your phone, powerful enough to run a full Linux distribution like Kali Linux!',
+  description: '(The Verge) This year at CES 2018, the company is showing off Project Linda, a companion piece of hardware for the recently released Razer Phone that extends the smartphone into a full laptop.',
   date: new Date('2018-01-10'),
 }
 
@@ -15,7 +16,10 @@ export default (props) => <ArticleLayout post={post} {...props} />
 
 # Razer introduces Project Linda
 
-[theverge.com/circuitbreaker/2018/1/9/16866206/razer-project-linda-phone-laptop-dock-touchpad-prototype-android-concept-ces-2018](https://www.theverge.com/circuitbreaker/2018/1/9/16866206/razer-project-linda-phone-laptop-dock-touchpad-prototype-android-concept-ces-2018)
+<WebLinkFetchBlock
+  href="https://www.theverge.com/circuitbreaker/2018/1/9/16866206/razer-project-linda-phone-laptop-dock-touchpad-prototype-android-concept-ces-2018"
+  description="This year at CES 2018, the company is showing off Project Linda, a companion piece of hardware for the recently released Razer Phone that extends the smartphone into a full laptop."
+  dirname={import.meta.dirname} filename="weblink.json" variant="green" />
 
 Imagine a portable laptop shell that you run off your phone, powerful enough to run a full Linux distribution like [Kali Linux](https://kali.org/)! Hardware products like this are always incredible. And the build quality of Razer's solution looks very high-end.
 
