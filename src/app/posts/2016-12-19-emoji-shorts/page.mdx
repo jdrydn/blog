@@ -1,4 +1,5 @@
 import { ArticleLayout } from '@/components/ArticleLayout'
+import { WebLinkPreviewBlock, getSocialLinkIcon } from '@/components/WebLink'
 
 import angryEmotionImg from './angry-emotion.gif'
 import slackExample from './slack-example.gif'
@@ -32,7 +33,12 @@ I love how Slack handles emoji. Transforming `:tada:` into 🎉 and `:sunglasses
 
 And after several hours, the closest I could find was [Mojier](https://npm.im/mojier), published two years ago, which mapped emojis to their shortcodes and back again. But being two years out of date means the library was half-complete, and the lookups were slow (`for(var p in emoji)`), so ten minutes later I had *emoji-shorts* online ✊
 
-[emoji-shorts](https://npm.im/emoji-shorts)
+<WebLinkPreviewBlock
+  href="https://www.npmjs.com/package/emoji-shorts"
+  title="emoji-shorts"
+  description="From 🌎 to :globe: and back again."
+  variant="red"
+  icon={getSocialLinkIcon('NPM')}/>
 
 Using this to translate strings containing emoji is easy:
 
@@ -46,6 +52,13 @@ console.log(emoji.toRich('The most elegant parts of me weren\'t written by you :
 
 The emojis & relevant short-codes came [from Github themselves](https://github.com/github/gemoji), with a little post-processing to make the lookups a little faster. Ideally this would be used when saving user-input & when fetching user-input, so your ORM / database engine of choice is none the wiser 😉
 
-If you have any questions, or you wish to submit a PR (of which all are welcome, we all ❤️ emojis!) then please feel free to get involved: https://github.com/car-throttle/emoji-shorts
+If you have any questions, or you wish to submit a PR (of which all are welcome, we all ❤️ emojis!) then please feel free to get involved:
+
+<WebLinkPreviewBlock
+  href="https://github.com/someimportantcompany/emoji-shorts"
+  title="emoji-shorts"
+  description="From 🌎 to :globe: and back again."
+  variant="gray"
+  icon={getSocialLinkIcon('GITHUB')}/>
 
 In the meantime, Merry Christmas 🎄🎁🎅

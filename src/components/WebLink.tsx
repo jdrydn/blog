@@ -10,6 +10,11 @@ const variants = {
     title: 'text-slate-800',
     description: 'text-slate-500',
   },
+  gray: {
+    border: 'border-gray-200 hover:border-gray-300',
+    title: 'text-gray-800',
+    description: 'text-gray-500',
+  },
   green: {
     border: 'border-green-200 hover:border-green-300',
     title: 'text-green-800',
@@ -37,6 +42,17 @@ const variants = {
   },
 }
 
+export interface WebLinkPreviewProps {
+  href: string
+  title?: string
+  description?: string | false
+  className?: string
+  rel?: string
+  variant?: keyof typeof variants
+  image?: Pick<ImageProps, 'src' | 'alt'> | false
+  icon?: Pick<ImageProps, 'src' | 'alt'> | false
+}
+
 export async function WebLinkFetchBlock({
   href,
   dirname,
@@ -46,15 +62,19 @@ export async function WebLinkFetchBlock({
   rel,
   className,
   variant = 'slate',
+  image,
+  icon,
 }: {
-  href: string
+  href: WebLinkPreviewProps['href']
   dirname: string
   filename: string
-  title?: string
-  description?: string
-  className?: string
-  rel?: string
-  variant?: keyof typeof variants
+  title?: WebLinkPreviewProps['title']
+  description?: WebLinkPreviewProps['description']
+  className?: WebLinkPreviewProps['className']
+  rel?: WebLinkPreviewProps['rel']
+  variant?: WebLinkPreviewProps['variant']
+  image?: false
+  icon?: false
 }) {
   const preview = await getLinkPreview(href, path.join(dirname.replace('/.next/server/', '/src/'), filename))
 
@@ -63,12 +83,19 @@ export async function WebLinkFetchBlock({
       href={href}
       title={title ?? preview?.title}
       description={description ?? preview?.description}
-      image={preview?.image ? { src: preview.image, alt: preview.title ?? '' } : undefined}
-      icon={preview?.favicon ? { src: preview.favicon, alt: preview.siteName ?? '' } : undefined}
+      image={image ?? (preview?.image ? { src: preview.image, alt: preview.title ?? '' } : undefined)}
+      icon={icon ?? (preview?.favicon ? { src: preview.favicon, alt: preview.siteName ?? '' } : undefined)}
       className={className} rel={rel} variant={variant} />
   )
 }
 
+export function getSocialLinkIcon(src: string): WebLinkPreviewProps['icon'] {
+  switch (src) {
+    case 'GITHUB': return { src: '/link-icons/github.svg', alt: 'GitHub' }
+    case 'NPM': return { src: '/link-icons/npm.png', alt: 'NPM' }
+    default: return undefined
+  }
+}
 
 export function WebLinkPreviewBlock({
   href,
@@ -79,16 +106,7 @@ export function WebLinkPreviewBlock({
   variant = 'slate',
   image,
   icon,
-}: {
-  href: string
-  title?: string
-  description?: string
-  className?: string
-  rel?: string
-  variant?: keyof typeof variants
-  image?: Pick<ImageProps, 'src' | 'alt'>
-  icon?: Pick<ImageProps, 'src' | 'alt'>
-}) {
+}: WebLinkPreviewProps) {
   return (
     <a
       href={href}
