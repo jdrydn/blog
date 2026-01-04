@@ -113,7 +113,7 @@ export function WebLinkPreviewBlock({
       target="_blank"
       rel={rel ?? 'nofollow noopener noreferrer'}
       className={clsx(
-        'group block w-full max-w-3xl overflow-hidden rounded-2xl border bg-white not-prose shadow-sm transition hover:shadow',
+        'group block w-full max-w-3xl my-5 overflow-hidden rounded-2xl border bg-white not-prose shadow-sm transition hover:shadow',
         variants[variant].border,
         className,
       )}

@@ -1,0 +1,34 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import { WebLinkFetchBlock } from '@/components/WebLink'
+
+export const post = {
+  title: 'You definitely should have timestamped it',
+  description: '(Changelog) Article on the importance of timestamping columns in databases.',
+  date: new Date('2021-05-09'),
+}
+
+export const metadata = {
+  title: post.title,
+  description: post.description,
+}
+
+export default (props) => <ArticleLayout post={post} {...props} />
+
+# You definitely should have timestamped it
+
+<WebLinkFetchBlock
+  href="https://changelog.com/posts/you-might-as-well-timestamp-it"
+  dirname={import.meta.dirname} filename="weblink.json" />
+
+> Storing timestamps instead of booleans, however, is one of those things I can go out on a limb and say it doesn't really depend all that much. You might as well timestamp it. There are plenty of times in my career when I've stored a boolean and later wished I'd had a timestamp. There are zero times when I've stored a timestamp and regretted that decision.
+
+Nailed it 🔨
+
+It's a pattern I've done by accident for a few tables, and now after reading this it'll be a pattern to implement literally everywhere.
+
+> Future-you will thank you. 🙏
+
+Other good articles from Changelog I've ended up reading over the weekend:
+
+- [There's a good reason why experienced devs say "it depends" so often](https://changelog.com/posts/good-reason-experienced-devs-say-it-depends)
+- [Hosting SQLite databases on GitHub Pages](https://changelog.com/news/hosting-sqlite-databases-on-github-pages-RwVp)

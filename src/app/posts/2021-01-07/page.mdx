@@ -1,0 +1,42 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import { WebLinkFetchBlock } from '@/components/WebLink'
+
+export const post = {
+  title: 'Physical Infosec Breach',
+  description: '(The Verge) Links on Trump\'s invasion of Congress, as well as a highlight on physical data security.',
+  date: new Date('2021-01-07'),
+}
+
+export const metadata = {
+  title: post.title,
+  description: post.description,
+}
+
+export default (props) => <ArticleLayout post={post} {...props} />
+
+# Physical Infosec Breach
+
+<WebLinkFetchBlock
+  href="https://www.theverge.com/2021/1/6/22217601/congress-capitol-building-takeover-coup-photos-pro-trump-mob"
+  description="On Wednesday afternoon, a mob of pro-Trump protesters stormed the US Capitol, resulting in chambers being vandalized and at least one death."
+  dirname={import.meta.dirname} filename="weblink1.json" />
+
+<WebLinkFetchBlock
+  href="https://www.theverge.com/tldr/2021/1/6/22217432/trump-supporters-petro-masculinity-capitol-building"
+  description="The concept of “petro-masculinity” was on full display Wednesday as Trump supporters and extremists like the Proud Boys haphazardly parked vehicles on the National Mall in Washington, DC before breaking into the Capitol, causing an evacuation."
+  dirname={import.meta.dirname} filename="weblink2.json" />
+
+<WebLinkFetchBlock
+  href="https://www.theverge.com/2021/1/6/22217411/capitol-building-lockdown-protesters-trump-supporters"
+  description="Pro-Trump protesters have stormed the US Capitol building, effectively halting a vote to certify the results of the 2020 election. The Capitol is currently on lockdown, and lawmakers from both chambers have been evacuated as the mob has breached both congressional chambers and voting floors."
+  dirname={import.meta.dirname} filename="weblink3.json" />
+
+----
+
+This Twitter thread from [@jacobian](https://twitter.com/jacobian/status/1347001812889452545) is excellent 👏
+
+> All computers need to be inventoried, inspected inside & out, and the OS paved/rebuilt.
+> Everything with a power source needs to be audited. Including outlets.
+> Any device with writable firmware needs to be binned.
+> "Remember, the S in IoT stands for Security"
+> Assume every piece of classified info in the building is compromised.

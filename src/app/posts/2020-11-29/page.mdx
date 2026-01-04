@@ -1,0 +1,29 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import { WebLinkFetchBlock } from '@/components/WebLink'
+
+export const post = {
+  title: 'Blog as you learn',
+  description: '(Ash Furrow) It\'s easier to write about a topic when it\'s fresh in your mind.',
+  date: new Date('2020-11-29'),
+}
+
+export const metadata = {
+  title: post.title,
+  description: post.description,
+}
+
+export default (props) => <ArticleLayout post={post} {...props} />
+
+# Blog as you learn
+
+<WebLinkFetchBlock
+  href="https://ashfurrow.com/blog/contemporaneous-blogging"
+  dirname={import.meta.dirname} filename="weblink.json" />
+
+> It's easier to write about a topic when it's fresh in your mind.
+>
+> If you mean to write about something later, it can easily become an item on a todo list that you're likely to put off and [not get to](https://github.com/ashfurrow/blog/issues/188#issuecomment-315918906).
+>
+> If you're able to fit writing into your schedule - please try to.
+>
+> Even if you keep it private, writing is a wonderful way to document knowledge and gain a deeper understanding of the subject. I encourage you to try it out, even if writing hasn't been a strength for you. I have faith you'll produce something of value.

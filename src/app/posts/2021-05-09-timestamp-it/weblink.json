@@ -1,0 +1,8 @@
+{
+  "url": "https://changelog.com/posts/you-might-as-well-timestamp-it",
+  "title": "You might as well timestamp it",
+  "description": "In my 15+ years of web development, there are very few things I can say are unequivocally a good idea. It almost always does depend. Storing timestamps instead of booleans, however, is one of those things I can go out on a limb and say it doesn't really depend all that much. You might as well timestamp it!",
+  "siteName": "Changelog",
+  "image": "https://cdn.changelog.com/uploads/posts/4WMq/large.jpg?v=63786406688",
+  "favicon": "https://cdn.changelog.com/static/favicon-b4b2f962a1fe2a589cbe515208193316.ico"
+}
