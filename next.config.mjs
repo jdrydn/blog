@@ -15,6 +15,16 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  webpack(config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) {
+    // Workaround for webpack not supporting import.meta.dirname
+    // - https://github.com/vercel/next.js/issues/60879#issuecomment-1900215814
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        "import.meta.dirname": "__dirname",
+      }),
+    );
+    return config;
+  },
 }
 
 const withMDX = nextMDX({

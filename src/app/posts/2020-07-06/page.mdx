@@ -1,5 +1,5 @@
 import { ArticleLayout } from '@/components/ArticleLayout'
-import { WebLinkPreview } from '@/components/WebLink'
+import { WebLinkPreviewBlock } from '@/components/WebLink'
 
 export const post = {
   title: 'WhatsApp went down for nearly an hour',
@@ -16,7 +16,7 @@ export default (props) => <ArticleLayout post={post} {...props} />
 
 # WhatsApp went down!
 
-<WebLinkPreview
+<WebLinkPreviewBlock
   title="WhatsApp went down for nearly an hour"
   description="WhatsApp went down for its 2 billion users earlier today, but service has now been restored. The issues started at around 4PM ET and prevented WhatsApp users from sending or receiving messages on the service for nearly an hour. The WhatsApp application would still open, but a connecting loop was displayed while the service experienced issues."
   href="https://www.theverge.com/2020/7/14/21324718/whatsapp-down-outage-issues"

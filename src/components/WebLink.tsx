@@ -1,5 +1,8 @@
-import Image, { type ImageProps } from "next/image"
 import clsx from "clsx"
+import Image, { type ImageProps } from "next/image"
+import path from "node:path"
+
+import { getLinkPreview } from "@/lib/server/link-preview";
 
 const variants = {
   slate: {
@@ -34,19 +37,50 @@ const variants = {
   },
 }
 
-export function WebLinkPreview({
+export async function WebLinkFetchBlock({
+  href,
+  dirname,
+  filename,
   title,
   description,
+  rel,
+  className,
+  variant = 'slate',
+}: {
+  href: string
+  dirname: string
+  filename: string
+  title?: string
+  description?: string
+  className?: string
+  rel?: string
+  variant?: keyof typeof variants
+}) {
+  const preview = await getLinkPreview(href, path.join(dirname.replace('/.next/server/', '/src/'), filename))
+
+  return (
+    <WebLinkPreviewBlock
+      href={href}
+      title={title ?? preview?.title}
+      description={description ?? preview?.description}
+      className={className} rel={rel} variant={variant} />
+  )
+}
+
+
+export function WebLinkPreviewBlock({
   href,
+  title,
+  description,
   rel,
   className,
   variant = 'slate',
   image,
-  icon
+  icon,
 }: {
-  title: string
-  description: string
   href: string
+  title?: string
+  description?: string
   className?: string
   rel?: string
   variant?: keyof typeof variants
@@ -67,15 +101,17 @@ export function WebLinkPreview({
       <div className="flex min-h-[120px]">
         {/* Left content */}
         <div className="flex flex-1 flex-col min-w-0 gap-2 px-5 py-4">
-          <span className={clsx('text-[18px] font-semibold leading-snug line-clamp-1', variants[variant].title)}>
-            {title}
-          </span>
+          {title && (
+            <span className={clsx('text-[18px] font-bold leading-snug', variants[variant].title)}>
+              {title}
+            </span>
+          )}
 
-          {description ? (
-            <p className={clsx('text-[15px] leading-snug', variants[variant].description)}>
+          {description && (
+            <p className="text-[15px] leading-snug">
               {description}
             </p>
-          ) : null}
+          )}
 
           <div className="mt-auto flex items-center gap-2">
             {icon && (
@@ -87,7 +123,7 @@ export function WebLinkPreview({
               />
             )}
 
-            <span className={clsx('min-w-0 truncate text-[15px]', variants[variant].title)}>
+            <span className="min-w-0 truncate text-[15px] font-light">
               {href.replace(/^http(s)?:\/\//, '').replace(/^www./, '')}
             </span>
           </div>
