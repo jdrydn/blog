@@ -1,0 +1,77 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+import homepageImg from './homepage.png'
+
+export const post = {
+  title: 'Running a Hackathon',
+  description: 'Organising and running an event in a week!',
+  date: new Date('2013-07-05'),
+}
+
+export const metadata = {
+  title: post.title,
+  description: post.description,
+}
+
+export default (props) => <ArticleLayout post={post} {...props} />
+
+# Running a hackathon 💻
+
+Organising and running an event in a week!
+
+> This article was originally posted on **Medium**.
+
+[#kenthack](http://kenthack.com/) is a hackathon I ran back in March at my [university](https://www.kent.ac.uk/), with the hope to inspire Computer Science students to teach themselves to code and teach themselves new languages outside of our course, like I did nearly two years ago.
+
+For my [first hackathon](https://web.archive.org/web/20130605181442/http://hackathonlondon.com/), I wrote an API in a weekend, learning Object-Oriented PHP & SQL along the way. And since then, I have been hooked on hackathons, going to them [left right & centre](https://angelhack.com).
+
+To the point where I decided to run my own. However, it took a while.
+
+For the first one, back in March, it took a few months to organise a venue, confirm popularity (I didn't want to run an event and have no-one turn up!), get some food & stuff, knock some presentations together, etc. etc. Honestly, it took longer than I wanted it too. But I didn't care. It was worth it.
+
+A few months passed and we discussed second events, however with a placement approaching, time was short. We thought we'd be running future hackathon events in 2014/2015, when we returned.
+
+However, something accelerated this process.
+
+<Image src={homepageImg} alt="A preview of the website whilst building up to the event!" />
+
+A preview of the website whilst building up to the event!
+
+We were approached by a company who had a venue, had supplies, had a location, but didn't have any events going on. And they'd heard about our first hackathon (one of the fellas from this company had attended) and they wanted to kick-off their new shiny venue with a hackathon.
+
+### **Perfect!**
+
+Well, kinda. It would take a lot of work. We had five days to organise this hackathon and get people together, to run it on the sixth day. Which is an incredible challenge, really. To go from nothing to everything in a week. Eeeep!
+
+So by the first day of organisation, we had written a quick website that [I slapped up on Github](https://github.com/kenthack/kenthack.github.io) due to their [excellent hosting](http://pages.github.com/),and written emails to be sent out and made various EventBrite events and Facebook events to catch people's attention.
+
+Day two involved just pumping out tweets and Facebook posts in various groups, just to get views and get people to see it (and hopefully sign up!). We also sent out the emails we'd written course-wide to attract any developers still in Canterbury!
+
+Days three & four just involved getting students aware of the event and seeing who was around Canterbury. We kept updating the event, even adding prizes, and kept trying to get student interest, especially in the computer science department. We even tried to get some lecturers to come round, however it was too short notice and they were unable to come down. Which is fair enough.
+
+And finally day five. We went down to the venue and set everything up, and spent most of the evening messaging round developers to ensure that a few turn up! The trouble was, with such short notice and the end of term, there weren't a lot of developers still around Canterbury. Which was disappointing, but not unexpected.
+
+### **And the day came…**
+
+So we spent the previous five days setting up and organising this event. And 9am came. And nobody was there. 10am came, and a few entrepreneurs and sixth formers from the nearby school turned up. 11am, and finally another developer walked through the door!
+
+The limited number of developers meant that us organisers had to get involved with the development. Which sucked a bit, but it was also a challenge. We had enough problems with the wifi network configuration blocking **every** port available (even **simple** ones like *25* for *SMTP* and *22* for *SSH*), which was ridiculous. However once our team got past that and we had a workflow going we managed to knock out a viable prototype in a couple of hours :)
+
+The other teams had designed and pitched iOS apps, however in the time available weren't able to produce any prototypes of sort, which was a shame, but the presentations they did were incredible, with some (*initially*) shy sixth formers stepping up to the stage and presenting with a natural confidence that even they weren't aware they had! It was incredible!
+
+### **And then the day was over…**
+
+As quickly as the day got started it was over. I'm glad to say we may have inspired a few future entrepreneurs and made some excellent beginning links with the nearby school.
+
+Not a lot of people used GitHub in the end, despite some pushing on my part, which was a shame. I guess if there had been more developers there then that would have made all the difference, since the developers that were there decided to use alternative means of collaboration straightaway and were in no mood to switch mid-development (which I suppose is fair enough!).
+
+### **So, upon reflection:**
+
+The event wasn't a *total* failure. I mean, sure, no great endeavours began. I don't know if the teams will stay in contact over the summer (hopefully they will!). But what did I learn from this whole process?
+
+- The organisation for the actual hackathon can be done pretty quickly and efficiently (something to definitely bear in mind for the next one!).
+- People. People are the hardest to get motivated.Driving (the few) people to that event was difficult. **Very difficult.** And the reason that was the timing of the event. Right at the end of term. In reflection the end of this week was a very bad choice - people either had exams, or had already gone home because their exams had finished. We should have waited until the middle of the summer, or the start of next term (*when people are just settling in to their course, and especially if they've come back from a placement year!*) and then held a summer event in a harmless weekend just before the exam season (*to see the progress older teams had made!*).
+
+Overall, I think we had a successful event. Next time I'm going to ensure that all the relevant ports are open, the event will take place over the whole weekend & the entire Kenthack team is present to organise - I feel I might be partly to blame since we were a subteam trying to organise the entire event instead of our whole team…
+
+I'd like to say a big thank you to [Edd Greer](http://twitter.com/edd_greer) for helping me with everything this week 😄 And I'd like to say thanks to our main sponsors at Silicon Aspire for the venue and the help on the day.

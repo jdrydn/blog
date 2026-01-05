@@ -1,0 +1,41 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import { WebLinkFetchBlock } from '@/components/WebLink'
+
+export const post = {
+  title: 'Apple introduces the M1',
+  description: '(The Verge) A collection of links around Apple\'s new Silicon chip, detailing power & performance',
+  date: new Date('2020-11-20'),
+}
+
+export const metadata = {
+  title: post.title,
+  description: post.description,
+}
+
+export default (props) => <ArticleLayout post={post} {...props} />
+
+# Apple introduces the M1
+
+<WebLinkFetchBlock
+  href="https://www.theverge.com/2020/11/10/21558095/apple-silicon-m1-chip-arm-macs-soc-charge-power-efficiency-mobile-processor"
+  dirname={import.meta.dirname} filename="weblink1.json" />
+
+<WebLinkFetchBlock
+  href="https://www.theverge.com/2020/11/10/21559228/apple-new-macbook-air-pro-difference-arm-m1-fan-thermal-performance"
+  dirname={import.meta.dirname} filename="weblink2.json" />
+
+<WebLinkFetchBlock
+  href="https://www.theverge.com/21569603/apple-macbook-air-m1-review-price-specs-features-arm-silicon"
+  dirname={import.meta.dirname} filename="weblink3.json" />
+
+<WebLinkFetchBlock
+  href="https://www.theverge.com/21570497/apple-macbook-pro-2020-m1-review"
+  dirname={import.meta.dirname} filename="weblink4.json" />
+
+<WebLinkFetchBlock
+  href="https://www.theverge.com/2020/11/13/21563242/apple-m1-silicon-chip-arm-macbook-rosetta-confidence"
+  dirname={import.meta.dirname} filename="weblink5.json" />
+
+<WebLinkFetchBlock
+  href="https://www.theverge.com/2020/11/18/21574207/how-to-install-run-any-iphone-ipad-app-m1-mac"
+  dirname={import.meta.dirname} filename="weblink6.json" />
