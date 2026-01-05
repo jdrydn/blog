@@ -1,0 +1,72 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import { WebLinkFetchBlock } from '@/components/WebLink'
+
+import image from './image.png'
+
+export const post = {
+  title: 'Steamdeck: Day #1',
+  description: 'So it\'s finally happened. I\'ve invested in a Steamdeck. After months of (internal) debating between this & a Switch 2, the sale finally pushed me off the fence. Here\'s some first thoughts I\'ve had around the \'Deck, and what happens next.',
+  date: new Date('2025-10-07'),
+}
+
+export const metadata = {
+  title: post.title,
+  description: post.description,
+}
+
+export default (props) => <ArticleLayout post={post} {...props} />
+
+# Steamdeck: Day #1
+
+So it's finally happened. I've invested in a Steamdeck. The lowest model was on a great offer recently, so after months of (internal) debating between this & a Switch 2, the sale finally pushed me off the fence.
+
+A friend of mine posted his first day experience, and had inspired me to do the same.
+
+**First-time setup**
+
+Setting it up was an interesting process:
+
+- Choose your language, Connect to WiFi, Software update, failed?
+- Language (choose again), WiFi (remembered), Software update, failed??
+- Language, WiFi, Software updated, failed???
+
+Interesting loop for the first-time run. Steam forums suggest on & off again. So I force-powered off & left it for two minutes, surprisingly, this worked! Valve, you need a little TLC on that first-time setup!
+
+**This thing reboots. A lot.**
+
+Throughout my first evening, all I did was sign-in, download & play Dishonored. And it rebooted a lot - just frequently met with the Steam boot screen:
+
+<Image src={image} alt="Steamdeck boot screen"/>
+
+Reading the Steam Community pages & Reddit, I've managed to indirectly resolve this by capping the FPS to 30FPS & GPU to 600MHz - which I changed to try and improve the day-to-day battery life - and noticed this change has reduced those reboots, so that's positive 🙌
+
+**This thing freezes. A lot.**
+
+This one.. I'm going to open a ticket with Steam Support for this. I think there's a problem in SteamOS causing this - it doesn't seem right. I left Portal downloading for 10m & it had hung, so force-rebooted it & it had downloaded the game in-full? So it's operational, still downloading, just… stops?
+
+**Game compatibility is… weird?**
+
+- Valve games have clearly had additional support. Left for Dead 2 runs great on this - shame I don't, I keep running ahead forgetting it's in Single Player mode & that gameplay behaviour is a team-one! 😅
+- Games with reportedly good compatibility are very good - Dishonored runs very well!
+- Games with limited compatibility are hit & miss:
+    - Dishonored 2 is incredible on this, not hit an issue yet, but I've only played for 30m or so on the tutorial level & watching the first (long) introduction scenes - I'll definitely be coming back to it to see how the rest of the game is.
+    - Counter-Strike 2? Single player against bots, sucks. Freezing, controller issues, just a terrible experience.
+- Next attempt for me will be GTA IV - Steam pages say it's not great, ProtonDB gives it mixed results, lets see!
+
+**Hardware feels premium**
+
+It's much larger than my Switch - and heavier too. I guess that's a good thing? It's a handheld playing PC games, so sure.
+
+The "touchpads" are strange / will take some time getting used to, but I understand why they're included. Some games out-of-the-box go straight into keyboard/mouse, and need configuring to a controller/'Deck layout.
+
+**What's next?**
+
+Tomorrow, I'm going to investigate the “freezing”/“hanging” more, try and capture some timings around it & open a Steam Support ticket, just in case it's a hardware issue.
+
+I'm also going to have a look at SteamOS Desktop mode - see if the freezing still continues there.
+
+In the next week, I want to try emulation on the ‘Deck, see what the performance is like compared to say, Delta on iPadOS.
+
+---
+
+**Day #1 with the SteamDeck.** I don't know if I'd announce it as a success? It's exciting, full of actual potential & tangible benefits, but it's not a console & it's important to remember that - it's a handheld PC, with all the pros & cons of PC gaming.

@@ -12,6 +12,10 @@ const variantStyles = {
   green: 'border-green-200 bg-green-100/50 text-green-800',
   blue: 'border-blue-200 bg-blue-100/50 text-blue-800',
   purple: 'border-purple-200 bg-purple-100/50 text-purple-800',
+  slate: 'border-slate-200 bg-slate-100/50 text-slate-800',
+  cyan: 'border-cyan-200 bg-cyan-100/50 text-cyan-800',
+  zinc: 'border-zinc-200 bg-zinc-100/50 text-zinc-800',
+  sky: 'border-sky-200 bg-sky-100/50 text-sky-800',
 }
 
 export function Badge({

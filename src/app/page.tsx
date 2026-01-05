@@ -1,18 +1,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import clsx from 'clsx'
 
+import links from '@/links'
 import { employment } from '@/employment'
 
+import HomepagePhotos from '@/components/HomepagePhotos'
 import { Button } from '@/components/Button'
 import { Card } from '@/components/Card'
 import { Container } from '@/components/Container'
 import { LinkedInIcon } from '@/components/SocialIcons'
-import image1 from '@/images/photos/image-1.jpg'
-import image2 from '@/images/photos/image-2.jpg'
-import image3 from '@/images/photos/image-3.jpg'
-import image4 from '@/images/photos/image-4.jpg'
-import image5 from '@/images/photos/image-5.jpg'
 import { getAllPosts, type Post } from '@/lib/posts'
 import { formatDate } from '@/lib/formatDate'
 
@@ -110,39 +106,10 @@ function Resume() {
           </li>
         ))}
       </ol>
-      <Button href="#" variant="secondary" align="start" className="group mt-6 pl-15 w-full">
+      <Button href={links.linkedin} target="_blank" variant="secondary" align="start" className="group mt-6 pl-15 w-full">
         Read more on LinkedIn
         <LinkedInIcon className="h-4 w-4 stroke-zinc-400 transition group-active:stroke-zinc-600" />
       </Button>
-    </div>
-  )
-}
-
-function Photos() {
-  let rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2']
-
-  return (
-    <div className="mt-16 sm:mt-20">
-      <div className="-my-4 flex justify-center gap-5 overflow-hidden py-4 sm:gap-8">
-        {[image1, image2, image3, image4, image5].map((image, imageIndex) => (
-          <div
-            key={image.src}
-            className={clsx(
-              'relative w-44 flex-none overflow-hidden rounded-xl bg-zinc-100 sm:w-72 sm:rounded-2xl',
-              rotations[imageIndex % rotations.length],
-            )}
-          >
-            <div className="aspect-9/10">
-              <Image
-                src={image}
-                alt=""
-                sizes="(min-width: 640px) 18rem, 11rem"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   )
 }
@@ -182,19 +149,19 @@ export default async function Home() {
           </noscript>
         </div>
       </Container>
-      <Photos />
+      <HomepagePhotos />
       <Container className="mt-24 md:mt-28">
         <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
           <div className="flex flex-col gap-16">
             {items.map(({ post, slug, date }) => (
               <Article key={slug} {...{ post, slug, date }} />
             ))}
-            <div className="group relative flex flex-col items-end">
+            <div className="group relative flex flex-col items-start">
               <Link
                 className="relative z-10 mt-4 flex items-center text-sm font-medium text-teal-500"
                 href="/posts"
               >
-                Read more
+                All Posts
                 <ChevronRightIcon className="ml-1 h-4 w-4 stroke-current" />
               </Link>
             </div>

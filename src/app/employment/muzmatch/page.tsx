@@ -48,7 +48,7 @@ export default function Uses() {
             <Image
               src={homepageImage}
               alt="muzmatch homepage (2018)"
-              className="aspect-square rounded bg-zinc-100 object-cover"
+              className="rounded"
               sizes="(min-width: 1024px) 32rem, 20rem" />
           </div>
         </div>

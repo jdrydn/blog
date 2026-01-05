@@ -52,7 +52,7 @@ export default function Uses() {
               src={homepageImage}
               alt="Car Throttle homepage (2017)"
               sizes="(min-width: 1024px) 32rem, 20rem"
-              className="aspect-square rounded bg-zinc-100 object-cover"
+              className="rounded border border-slate-500"
             />
           </div>
         </div>

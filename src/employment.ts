@@ -19,14 +19,14 @@ export const employment: Array<Role> = [
   {
     company: 'Tech City Ventures',
     title: 'Head of Technology',
-    url: 'https://www.crunchbase.com/organization/tech-city-ventures',
+    url: '/employment/techcityventures',
     logo: '/logos/techcityventures.jpg',
     between: ['2022', '2023'],
   },
   {
     company: 'Real Links',
     title: 'CTO / Lead Engineer',
-    url: 'https://www.reallinks.io',
+    url: '/employment/real-links',
     logo: '/logos/real-links.jpeg',
     between: ['2019', '2022'],
   },

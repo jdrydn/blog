@@ -50,7 +50,7 @@ export default function Uses() {
               src={homepageImage}
               alt="Mindwork Labs homepage"
               sizes="(min-width: 1024px) 32rem, 20rem"
-              className="aspect-square rounded bg-zinc-100 object-cover"
+              className="rounded"
             />
           </div>
         </div>

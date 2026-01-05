@@ -29,7 +29,7 @@ export function Footer() {
               <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm font-medium text-zinc-800">
                 <NavLink href="/projects">Projects</NavLink>
                 <NavLink href="/speaking">Speaking</NavLink>
-                <NavLink href="/uses">Uses</NavLink>
+                <NavLink href="/now">Now</NavLink>
               </div>
               <p className="text-sm text-zinc-400">
                 &copy; {new Date().getFullYear()} jdrydn - All rights reserved.

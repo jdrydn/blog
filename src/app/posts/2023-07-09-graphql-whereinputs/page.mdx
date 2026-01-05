@@ -1,0 +1,174 @@
+import { ArticleLayout, ArticleTitle } from '@/components/MDX'
+
+import icon from './graphql.png'
+
+export const post = {
+  title: 'GraphQL WhereInputs',
+  description: 'To address a common GraphQL issue, I tend to build a series of "WhereInput" types into the GraphQL project, which are small reusable inputs throughout the schema, to create a uniform way to filter entries or select a relational entry when creating/updating entries.',
+  date: new Date('2023-07-09'),
+}
+
+export const metadata = {
+  title: post.title,
+  description: post.description,
+}
+
+export default (props) => <ArticleLayout post={post} {...props} />
+
+<ArticleTitle title="GraphQL WhereInputs" icon={icon}/>
+
+When you resolve properties in GraphQL types, especially resolving relational types, you usually take a single ID & expand it into an object.
+
+Frustratingly, GraphQL doesn’t support the same resolver behaviour for input types. Typically you’d have to send up the ID as a standalone property - which you need to know/lookup beforehand. And what about bulk queries, where you (atomically) can’t fetch all IDs at once to perform updates?
+
+```graphql
+# For example, imagine loading this post from GraphQL
+query FetchPost {
+  post(permalink: "graphql-whereinputs") {
+    id
+    title
+    excerpt
+
+    # Where author is a relational field
+    # typically stored in a database as authorId
+    # Then GraphQL resolves the "author" property
+    # by fetching the Author by ID from the database
+    author {
+      id
+      name
+      avatar
+    }
+  }
+}
+
+# Now imagine setting the post author by ID
+mutation SetPostAuthor {
+  # Where you call a mutation designed to set the post's
+  # properties, likely based on your database schema.
+  updateOnePost(id: "1010", update: {
+    # But wait, you need to know the ID of the author
+    # before performing the update operation?
+    authorId: "22"
+  }) {
+    id
+  }
+}
+
+# So in essence, GraphQL has left us with a system that:
+# Reads      | Writes
+# ---------- | ----------
+# author.id  | authorId
+#
+# Which isn't very uniform! What would be better is:
+# Reads      | Writes
+# ---------- | ----------
+# author.id  | author.id
+```
+
+To address this issue I tend to build a series of "*WhereInput*" types into the GraphQL project, which are small reusable **inputs** throughout the schema, to create a uniform way to filter entries or select a relational entry when creating/updating entries:
+
+```graphql
+input AuthorWhereOneInput {
+  id: ID
+  email: String
+}
+input AuthorWhereManyInput {
+  id: ID
+  id_in: [ID!]
+  email: String
+  email_in: [String!]
+  createdAt_lte: String
+  createdAt_gte: String
+}
+
+input PostWhereOneInput {
+  id: ID
+  permalink: String
+}
+input PostWhereManyInput {
+  id: ID
+  id_in: [ID!]
+  permalink: String
+  permalink_contains: String
+  author: AuthorWhereManyInput
+  createdAt_lte: String
+  createdAt_gte: String
+  status: PostStatusEnum
+}
+```
+
+An example usage of these might include:
+
+```graphql
+query FetchPost {
+  # Not much difference from before,
+  # except the PostWhereOneInput sits in a "where" property
+  # on the query
+  post(where: { permalink: "graphql-whereinputs" }) {
+    id
+    title
+    excerpt
+    author {
+      id
+      name
+      avatar
+    }
+  }
+}
+
+mutation SetPostAuthor {
+  # But within mutations, WhereInputs really shine
+  updateOnePost(where: {
+    # Updating an entry using the exact property to identify it
+    permalink: "graphql-whereinputs"
+  }, update: {
+    # And using a similar structure for the output
+    # To influence the change for the input
+    author: { email: "jdrydn@noreply.github.io" }
+  }) {
+    updated # Boolean
+  }
+}
+
+mutation RemoveAllPostsForUser {
+  # And depending on your database, WhereInputs can properly
+  # unlock the potential behind your GraphQL API
+  updateManyPosts(where: {
+    author: { email: "jdrydn@noreply.github.io" },
+    status: ACTIVE
+  }, update: {
+    status: DELETED
+  }) {
+    updatedCount # Int
+  }
+}
+```
+
+Implementing WhereInputs into your GraphQL project has plenty of benefits & side effects, the top three include:
+
+1. Unify how you specify relational entities in your GraphQL schema. Rather than using a quick entryID input property (e.g. `author: $userID`) you can use a uniform object (e.g. `author: { id: $userID }` or `author: { email: $email }`). And, depending on how you structure your Input functions, you could perform additional validation on the relational entry you want to use) e.g. `{ id: $userID, status: ACTIVE }`).
+2. When you want to filter entries by a new property, e.g. a user’s favourite colour, you add a few lines of code in one function & now anywhere you already filter users can now filter by email!
+3. A good *WhereInput* implementation can also give your application logic a unified way of searching for entries by your *WhereInput* query, simplifying your application logic further.
+
+**Remarks**
+
+1. By habit, I tend to append "`Input`"/"`Enum`" to the end of these types so when used throughout the codebase, it's always clear that what type I'm using.
+    - It would be nice to have a `type`/`input` class that works for both reading & writing though!
+2. If you’re building a GraphQL API in Node.JS without [**`dataloader`**](https://npm.im/dataloader) or [**`graphql-resolve-batch`**](https://npm.im/graphql-resolve-batch) be sure to check them out - both libraries make bulk-loading data ruthlessly efficient!
+    - You can combine your Inputs with a Dataloader instance to create a uniform way of fetching entry IDs from a schema-defined object **internally**. This is incredibly useful within your resolvers but throughout the rest of your application too!
+
+    ```jsx
+    export const resolvers = {
+      async updateManyPosts(_, { update, where }, ctx) {
+        const { PostsWhereManyInput } = ctx.loaders;
+        const postIds = await PostsWhereManyInput.load(where);
+
+        const { Posts } = ctx.models;
+        const { affected } = await Posts.updateMany({
+          _id: { $in: postIds },
+        }, update);
+
+        return { updatedCount: affected };
+      },
+    };
+    ```
