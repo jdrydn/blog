@@ -1,9 +1,10 @@
 import fs from 'fs/promises'
 import glob from 'fast-glob'
+import type { ReactNode } from 'react'
 
 export interface Post {
   title?: string
-  description?: string
+  description?: ReactNode
   date?: Date
   draft?: boolean
 }

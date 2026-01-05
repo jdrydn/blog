@@ -1,18 +1,13 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import { WebLinkFetchBlock } from '@/components/WebLink'
+import { createMetadata, createPage, parseDate, WebLinkFetchBlock } from '@/components/MDX'
 
 export const post = {
   title: 'Physical Infosec Breach',
   description: '(The Verge) Links on Trump\'s invasion of Congress, as well as a highlight on physical data security.',
-  date: new Date('2021-01-07'),
+  date: parseDate(import.meta.dirname),
 }
 
-export const metadata = {
-  title: post.title,
-  description: post.description,
-}
-
-export default (props) => <ArticleLayout post={post} {...props} />
+export const metadata = createMetadata(post)
+export default createPage(post)
 
 # Physical Infosec Breach
 

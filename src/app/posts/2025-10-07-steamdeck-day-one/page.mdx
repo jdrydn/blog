@@ -1,20 +1,15 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import { WebLinkFetchBlock } from '@/components/WebLink'
+import { createMetadata, createPage, parseDate, WebLinkFetchBlock } from '@/components/MDX'
 
 import image from './image.png'
 
 export const post = {
   title: 'Steamdeck: Day #1',
   description: 'So it\'s finally happened. I\'ve invested in a Steamdeck. After months of (internal) debating between this & a Switch 2, the sale finally pushed me off the fence. Here\'s some first thoughts I\'ve had around the \'Deck, and what happens next.',
-  date: new Date('2025-10-07'),
+  date: parseDate(import.meta.dirname),
 }
 
-export const metadata = {
-  title: post.title,
-  description: post.description,
-}
-
-export default (props) => <ArticleLayout post={post} {...props} />
+export const metadata = createMetadata(post)
+export default createPage(post)
 
 # Steamdeck: Day #1
 

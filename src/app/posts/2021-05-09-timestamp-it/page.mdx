@@ -1,18 +1,13 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import { WebLinkFetchBlock } from '@/components/WebLink'
+import { createMetadata, createPage, parseDate, WebLinkFetchBlock } from '@/components/MDX'
 
 export const post = {
   title: 'You definitely should have timestamped it',
   description: '(Changelog) Article on the importance of timestamping columns in databases.',
-  date: new Date('2021-05-09'),
+  date: parseDate(import.meta.dirname),
 }
 
-export const metadata = {
-  title: post.title,
-  description: post.description,
-}
-
-export default (props) => <ArticleLayout post={post} {...props} />
+export const metadata = createMetadata(post)
+export default createPage(post)
 
 # You definitely should have timestamped it
 

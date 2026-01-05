@@ -1,18 +1,13 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import { WebLinkFetchBlock } from '@/components/WebLink'
+import { createMetadata, createPage, parseDate, WebLinkFetchBlock } from '@/components/MDX'
 
 export const post = {
   title: 'You can\'t trust anyone - but don\'t panic!',
   description: '(DHH) Google will eventually kill every single service you care about, if they can\'t find a way to directly monetize it with ads at a scale of billions. They\'re institutionally incapable of being in the product or service business, because neither products nor services butter Google\'s bread. Advertisement does.',
-  date: new Date('2023-07-16'),
+  date: parseDate(import.meta.dirname),
 }
 
-export const metadata = {
-  title: post.title,
-  description: post.description,
-}
-
-export default (props) => <ArticleLayout post={post} {...props} />
+export const metadata = createMetadata(post)
+export default createPage(post)
 
 # {post.title}
 

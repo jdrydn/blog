@@ -1,19 +1,15 @@
-import { ArticleLayout, ArticleTitle } from '@/components/MDX'
+import { createMetadata, createPage, parseDate, ArticleTitle, WebLinkFetchBlock } from '@/components/MDX'
 
 import icon from './graphql.png'
 
 export const post = {
   title: 'GraphQL WhereInputs',
   description: 'To address a common GraphQL issue, I tend to build a series of "WhereInput" types into the GraphQL project, which are small reusable inputs throughout the schema, to create a uniform way to filter entries or select a relational entry when creating/updating entries.',
-  date: new Date('2023-07-09'),
+  date: parseDate(import.meta.dirname),
 }
 
-export const metadata = {
-  title: post.title,
-  description: post.description,
-}
-
-export default (props) => <ArticleLayout post={post} {...props} />
+export const metadata = createMetadata(post)
+export default createPage(post)
 
 <ArticleTitle title="GraphQL WhereInputs" icon={icon}/>
 

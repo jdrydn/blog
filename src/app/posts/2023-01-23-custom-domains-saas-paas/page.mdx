@@ -1,5 +1,4 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import { WebLinkFetchBlock } from '@/components/WebLink'
+import { createMetadata, createPage, parseDate } from '@/components/MDX'
 
 import image1 from './image1.png'
 import image2 from './image2.png'
@@ -8,15 +7,11 @@ import image3 from './image3.png'
 export const post = {
   title: 'The custom domain problem for SaaS on PaaS',
   description: 'Custom domains is an interesting problem for most SaaS business, especially those running on large PaaS/IaaS providers such as AWS or GCP. The problem is, PaaS doesn\'t help when you want to run custom domains for your SaaS.',
-  date: new Date('2023-01-23'),
+  date: parseDate(import.meta.dirname),
 }
 
-export const metadata = {
-  title: post.title,
-  description: post.description,
-}
-
-export default (props) => <ArticleLayout post={post} {...props} />
+export const metadata = createMetadata(post)
+export default createPage(post)
 
 # The custom domain problem for SaaS on PaaS
 
