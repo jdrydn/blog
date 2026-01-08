@@ -9,9 +9,9 @@ function ToolsSection({
 }: React.ComponentPropsWithoutRef<typeof Section>) {
   return (
     <Section {...props}>
-      <ul role="list" className="space-y-8">
+      <div role="list" className="space-y-8">
         {children}
-      </ul>
+      </div>
     </Section>
   )
 }
@@ -23,14 +23,16 @@ function Tool({
 }: {
   title: string
   href?: string
-  children: React.ReactNode
+  children?: React.ReactNode
 }) {
   return (
-    <Card as="li">
+    <Card>
       <Card.Title as="h3" href={href}>
         {title}
       </Card.Title>
-      <Card.Description>{children}</Card.Description>
+      {children && (
+        <Card.Description>{children}</Card.Description>
+      )}
     </Card>
   )
 }
@@ -79,9 +81,7 @@ export default function Uses() {
           </Tool>
         </ToolsSection>
         <ToolsSection title="Software">
-          <Tool title="macOS">
-            macOS beats most Linux distributions anyway
-          </Tool>
+          <Tool title="macOS" />
           <Tool title="Brave">
             One day I was triggered by Google Chrome's interference & finally made the switch - Brave has been an
             excellent experience so far, and the privacy blockers have been a breath of fresh air when browsing the
@@ -96,17 +96,19 @@ export default function Uses() {
             More than just the built-in macOS Terminal, iTerm2 has a ridiculously effective split-screen feature, which
             is handy given how much I seem to multi-task in a full-screen iTerm session!
           </Tool>
-          <Tool title="Stack">
+
+          <Card>
+            <Card.Title as="h3">Stack</Card.Title>
             <dl className="divide-y divide-gray-100">
               <div className="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
-                <dt className="text-sm/6 font-medium text-gray-900">Backend</dt>
+                <dt className="text-sm/6 font-medium text-gray-900 mb-3 sm:mb-0">Backend</dt>
                 <dd className="mt-1 flex flex-row flex-wrap gap-3 sm:col-span-3 sm:mt-0">
                   <Badge variant="green">Node.js</Badge>
                   <Badge variant="purple">PHP</Badge>
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
-                <dt className="text-sm/6 font-medium text-gray-900">Database</dt>
+                <dt className="text-sm/6 font-medium text-gray-900 mb-3 sm:mb-0">Database</dt>
                 <dd className="mt-1 flex flex-row flex-wrap gap-3 sm:col-span-3 sm:mt-0">
                   <Badge variant="slate">Postgres</Badge>
                   <Badge variant="yellow">MySQL</Badge>
@@ -116,7 +118,7 @@ export default function Uses() {
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
-                <dt className="text-sm/6 font-medium text-gray-900">Frontend</dt>
+                <dt className="text-sm/6 font-medium text-gray-900 mb-3 sm:mb-0">Frontend</dt>
                 <dd className="mt-1 flex flex-row flex-wrap gap-3 sm:col-span-3 sm:mt-0">
                   <Badge variant="green">Vue.js</Badge>
                   <Badge variant="blue">React.js</Badge>
@@ -127,7 +129,7 @@ export default function Uses() {
                 </dd>
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
-                <dt className="text-sm/6 font-medium text-gray-900">Testing</dt>
+                <dt className="text-sm/6 font-medium text-gray-900 mb-3 sm:mb-0">Testing</dt>
                 <dd className="mt-1 flex flex-row flex-wrap gap-3 sm:col-span-3 sm:mt-0">
                   <Badge variant="amber">Mocha</Badge>
                   <Badge variant="blue">Jest</Badge>
@@ -135,22 +137,42 @@ export default function Uses() {
                 </dd>
               </div>
             </dl>
-          </Tool>
+          </Card>
         </ToolsSection>
         <ToolsSection title="Games">
-          <Tool title="Dishonored">
-            A stunning story with perfect single-player gameplay, parkour, powers & pistols!
+          <Tool title="Dishonored (2012)">
+            A stunning story with high-quality single-player gameplay, parkour, powers & pistols! This stands the test
+            of time, with it's graphics & gameplay complementing eachother flawlessly.
           </Tool>
-          <Tool title="Dishonored 2">
-            Sequel to <b>Dishonored</b> - the next generation of parkour, powers & pistols!
+          <Tool title="Dishonored 2 (2016)">
+            Sequel to <b>Dishonored</b> - the next generation of parkour, powers & pistols! This game is my evidence the
+            Steam Deck was the right console for me 😍
           </Tool>
-          <Tool title="Star Wars: Jedi Fallen Order">
+          <Tool title="Marvel's Spider-Man (2018)">
+            Unbelivable game that's worthly of purchasing a console outright - an amazing single-player game set in it's
+            own Spider-Man universe, two big-name villains (or seven, depending how you count it) & a proper open-world
+            web-swinging experience.
+          </Tool>
+          <Tool title="Marvel's Spider-Man 2 (2023)">
+            Sequel to <b>Marvel's Spider-Man</b> - 3 big-name villains, 2 Spider-men & 1 seriously long single-player
+            campaign.
+          </Tool>
+          <Tool title="Star Wars: Jedi Fallen Order (2019)">
             Incredible game & incredible story - an amazing single-player game in the Star Wars universe, set after the
             events of the third film (<i>"Execute order 66"</i>)
           </Tool>
-          <Tool title="Star Wars: Jedi Survivor">
-            Sequel to <b>Jedi Fallen Order</b> - might be the only sequel where the main character isn't nerfed in the
-            opening act 😍
+          <Tool title="Star Wars: Jedi Survivor (2023)">
+            Sequel to <b>Jedi Fallen Order</b> - might be the only sequel I've played where the main character isn't
+            nerfed in the opening act 😍
+          </Tool>
+          <Tool title="The Legend of Zelda: Breath of the Wild (2017)">
+            BotW was the game that changed Zelda from a linear dungeon crawler to an open-world masterpiece. This game
+            stands tall today - with it's unique art style, superb gameplay & it's own set of puzzles.
+          </Tool>
+          <Tool title="The Legend of Zelda: Tears of the Kingdom (2023)">
+            Sequel to <b>Breath of the Wild</b> - main character was (quite literally) nerfed right back to "level 1" in
+            the opening act 😂 But the story fits it in perfectly, along with all the new changes to the world, this game
+            is an excellent sequel & possibly my favourite Zelda game of all time.
           </Tool>
         </ToolsSection>
       </div>

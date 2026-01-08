@@ -118,9 +118,9 @@ export function WebLinkPreviewBlock({
         className,
       )}
     >
-      <div className="flex min-h-[120px]">
-        {/* Left content */}
-        <div className="flex flex-1 flex-col min-w-0 gap-2 px-5 py-4">
+      <div className="flex flex-col sm:flex-row min-h-[120px]">
+        {/* Bottom/Left content */}
+        <div className="flex flex-1 flex-col min-w-0 gap-2 px-5 py-4 order-2 sm:order-1">
           {title && (
             <span className={clsx('text-[18px] font-bold leading-snug', variants[variant].title)}>
               {title}
@@ -151,19 +151,17 @@ export function WebLinkPreviewBlock({
           </div>
         </div>
 
-        {/* Right image */}
+        {/* Top/Right image */}
         {image && (
-          <div className="relative w-[36%] min-w-[220px] max-w-[340px] flex-none">
+          <div className="relative sm:w-[36%] sm:min-w-[220px] sm:max-w-[340px] flex-none order-1 sm:order-2">
             <Image
               src={image.src}
               alt={image.alt}
-              className="h-full w-full object-cover"
+              className="h-full w-full max-h-[250px] sm:max-h-full object-cover"
               loading="lazy"
               height={200}
               width={200}
             />
-            {/* soften the seam like many embeds do */}
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white/70 to-transparent" />
           </div>
         )}
       </div>
