@@ -33,7 +33,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm run css:build
+      - run: pnpm run build:css
       - run: bundle exec jekyll build
 
       - uses: actions/upload-pages-artifact@v3
