@@ -1,6 +1,22 @@
-.next/
+# Jekyll
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Dependencies
 node_modules/
+Gemfile.lock
+
+# Build output
+assets/css/style.css
+
+# Old Next.js
+.next/
 out/
 
+# OS
 .DS_Store
+
+# Environment
 .env*.local
