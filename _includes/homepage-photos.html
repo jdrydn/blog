@@ -1,0 +1,13 @@
+<div class="mt-16 sm:mt-20">
+  <div class="-my-4 flex justify-center gap-5 overflow-hidden py-4 sm:gap-8">
+    {% assign photos = "makeshift.jpg,koi.png,whiteboard.jpeg,bellagio.jpeg,new-vegas.jpeg" | split: "," %}
+    {% assign rotations = "rotate-2,-rotate-2,rotate-2,rotate-2,-rotate-2" | split: "," %}
+    {% for photo in photos %}
+    <div class="relative w-44 flex-none overflow-hidden rounded-xl bg-zinc-100 sm:w-72 sm:rounded-2xl {{ rotations[forloop.index0] }}">
+      <div class="aspect-9/10">
+        <img src="/assets/images/photos/{{ photo }}" alt="" width="300" height="300" sizes="(min-width: 640px) 18rem, 11rem" class="absolute inset-0 h-full w-full object-cover">
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>

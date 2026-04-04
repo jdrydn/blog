@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Inline icon for article titles (e.g. GraphQL post) */
+.inline-icon {
+  display: inline;
+  height: 40px;
+  width: 40px;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+/* Rouge syntax highlighting - GitHub Dark theme */
+.highlight {
+  background: var(--tw-prose-pre-bg, #18181b);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  overflow-x: auto;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.highlight code {
+  color: #e4e4e7;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: transparent;
+  padding: 0;
+}
+
+.highlight .c,
+.highlight .cm,
+.highlight .c1,
+.highlight .cs { color: #6b7280; font-style: italic; }
+.highlight .k,
+.highlight .kd,
+.highlight .kn,
+.highlight .kp,
+.highlight .kr,
+.highlight .kt { color: #c084fc; }
+.highlight .s,
+.highlight .sb,
+.highlight .sc,
+.highlight .sd,
+.highlight .s2,
+.highlight .sh,
+.highlight .s1 { color: #a5f3fc; }
+.highlight .si { color: #fbbf24; }
+.highlight .na { color: #7dd3fc; }
+.highlight .nb { color: #fbbf24; }
+.highlight .nc { color: #fbbf24; }
+.highlight .no { color: #f87171; }
+.highlight .nf,
+.highlight .nx { color: #7dd3fc; }
+.highlight .nn { color: #fbbf24; }
+.highlight .nt { color: #f87171; }
+.highlight .nv { color: #e4e4e7; }
+.highlight .o,
+.highlight .ow { color: #c084fc; }
+.highlight .p { color: #e4e4e7; }
+.highlight .mi,
+.highlight .mf,
+.highlight .mh,
+.highlight .mo { color: #34d399; }
