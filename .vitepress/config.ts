@@ -19,6 +19,8 @@ export default defineConfig({
 
   srcExclude: ['README.md'],
 
+  lastUpdated: true,
+
   themeConfig: {
     links: {
       threads: 'https://www.threads.com/@jdrydn26',

@@ -1,11 +1,17 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useData } from 'vitepress';
 
-const { frontmatter } = useData();
+const { frontmatter, page } = useData();
 
-function formatDate(date: string) {
+function formatDate(date: string | number) {
   return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
+
+const lastUpdated = computed(() => {
+  if (!page.value.lastUpdated) return null;
+  return formatDate(page.value.lastUpdated);
+});
 </script>
 
 <template>
@@ -30,6 +36,9 @@ function formatDate(date: string) {
                 <div class="prose">
                   <Content />
                 </div>
+                <footer v-if="lastUpdated" class="mt-12 pt-6 border-t border-zinc-100">
+                  <p class="text-sm text-zinc-400">Last updated {{ lastUpdated }}</p>
+                </footer>
               </article>
             </div>
           </div>

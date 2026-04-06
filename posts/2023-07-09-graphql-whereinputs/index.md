@@ -1,15 +1,21 @@
 ---
 layout: post
-title: "GraphQL WhereInputs"
-description: 'To address a common GraphQL issue, I tend to build a series of "WhereInput" types into the GraphQL project, which are small reusable inputs throughout the schema, to create a uniform way to filter entries or select a relational entry when creating/updating entries.'
+title: 'GraphQL WhereInputs'
+description:
+  'To address a common GraphQL issue, I tend to build a series of "WhereInput" types into the GraphQL project, which are
+  small reusable inputs throughout the schema, to create a uniform way to filter entries or select a relational entry
+  when creating/updating entries.'
 date: 2023-07-09
 ---
 
 # <img src="./graphql.png" class="inline-icon" alt="" /> GraphQL WhereInputs
 
-When you resolve properties in GraphQL types, especially resolving relational types, you usually take a single ID & expand it into an object.
+When you resolve properties in GraphQL types, especially resolving relational types, you usually take a single ID &
+expand it into an object.
 
-Frustratingly, GraphQL doesn’t support the same resolver behaviour for input types. Typically you’d have to send up the ID as a standalone property - which you need to know/lookup beforehand. And what about bulk queries, where you (atomically) can’t fetch all IDs at once to perform updates?
+Frustratingly, GraphQL doesn’t support the same resolver behaviour for input types. Typically you’d have to send up the
+ID as a standalone property - which you need to know/lookup beforehand. And what about bulk queries, where you
+(atomically) can’t fetch all IDs at once to perform updates?
 
 ```graphql
 # For example, imagine loading this post from GraphQL
@@ -58,7 +64,9 @@ mutation SetPostAuthor {
 # author.id  | author.id
 ```
 
-To address this issue I tend to build a series of "_WhereInput_" types into the GraphQL project, which are small reusable **inputs** throughout the schema, to create a uniform way to filter entries or select a relational entry when creating/updating entries:
+To address this issue I tend to build a series of "_WhereInput_" types into the GraphQL project, which are small
+reusable **inputs** throughout the schema, to create a uniform way to filter entries or select a relational entry when
+creating/updating entries:
 
 ```graphql
 input AuthorWhereOneInput {
@@ -140,16 +148,27 @@ mutation RemoveAllPostsForUser {
 
 Implementing WhereInputs into your GraphQL project has plenty of benefits & side effects, the top three include:
 
-1. Unify how you specify relational entities in your GraphQL schema. Rather than using a quick entryID input property (e.g. `author: $userID`) you can use a uniform object (e.g. `author: { id: $userID }` or `author: { email: $email }`). And, depending on how you structure your Input functions, you could perform additional validation on the relational entry you want to use) e.g. `{ id: $userID, status: ACTIVE }`).
-2. When you want to filter entries by a new property, e.g. a user’s favourite colour, you add a few lines of code in one function & now anywhere you already filter users can now filter by email!
-3. A good *WhereInput* implementation can also give your application logic a unified way of searching for entries by your *WhereInput* query, simplifying your application logic further.
+1. Unify how you specify relational entities in your GraphQL schema. Rather than using a quick entryID input property
+   (e.g. `author: $userID`) you can use a uniform object
+   (e.g. `author: { id: $userID }` or `author: { email: $email }`). And, depending on how you structure your Input
+   functions, you could perform additional validation on the relational entry you want to use)
+   e.g. `{ id: $userID, status: ACTIVE }`).
+2. When you want to filter entries by a new property, e.g. a user’s favourite colour, you add a few lines of code in one
+   function & now anywhere you already filter users can now filter by email!
+3. A good *WhereInput* implementation can also give your application logic a unified way of searching for entries by
+   your *WhereInput* query, simplifying your application logic further.
 
 **Remarks**
 
-1. By habit, I tend to append "`Input`"/"`Enum`" to the end of these types so when used throughout the codebase, it's always clear that what type I'm using.
+1. By habit, I tend to append "`Input`"/"`Enum`" to the end of these types so when used throughout the codebase, it's
+   always clear that what type I'm using.
    - It would be nice to have a `type`/`input` class that works for both reading & writing though!
-2. If you’re building a GraphQL API in Node.JS without [**`dataloader`**](https://npm.im/dataloader) or [**`graphql-resolve-batch`**](https://npm.im/graphql-resolve-batch) be sure to check them out - both libraries make bulk-loading data ruthlessly efficient!
-   - You can combine your Inputs with a Dataloader instance to create a uniform way of fetching entry IDs from a schema-defined object **internally**. This is incredibly useful within your resolvers but throughout the rest of your application too!
+2. If you’re building a GraphQL API in Node.JS
+   without [**`dataloader`**](https://npm.im/dataloader) or [**`graphql-resolve-batch`**](https://npm.im/graphql-resolve-batch) be
+   sure to check them out - both libraries make bulk-loading data ruthlessly efficient!
+   - You can combine your Inputs with a Dataloader instance to create a uniform way of fetching entry IDs from a
+     schema-defined object **internally**. This is incredibly useful within your resolvers but throughout the rest of
+     your application too!
 
    ```jsx
    export const resolvers = {

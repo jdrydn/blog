@@ -1,55 +1,70 @@
 ---
 layout: post
-title: "Telegram Hero"
-description: "So, if you've ever used Telegram, you'll know how great it is to chat securely between people. And if you're a developer and you've checked out Telegram Bots, you'll know there is an API to allow you to programmatically communicate with people."
+title: 'Telegram Hero'
+description:
+  "So, if you've ever used Telegram, you'll know how great it is to chat securely between people. And if you're a
+  developer and you've checked out Telegram Bots, you'll know there is an API to allow you to programmatically
+  communicate with people."
 date: 2016-02-16
 ---
 
 # Telegram Hero
 
-So, if you've ever used [Telegram](https://telegram.org/), you'll know how great it is to chat securely between people. And if you're a developer and you've checked out Telegram Bots, you'll know there is an API to allow you to programmatically communicate with people.
+So, if you've ever used [Telegram](https://telegram.org/), you'll know how great it is to chat securely between people.
+And if you're a developer and you've checked out Telegram Bots, you'll know there is an API to allow you to
+programmatically communicate with people.
 
-Awesome!
-… Well, nearly awesome.
+Awesome! … Well, nearly awesome.
 
 ```js
 var bot = new TelegramBot('my-awesome-token-here');
 bot.sendMessage('Hello, world!', callback);
 ```
 
-Most modules written for Node are built around instances, similar to the above. And, whilst this is fine for just one, or a couple of bots, it's not ideal for a service with many potential bots. And these solutions aren't very flexible when it comes to [the webhooks feature](https://core.telegram.org/bots/api#setwebhook) that Telegram bots work with.
+Most modules written for Node are built around instances, similar to the above. And, whilst this is fine for just one,
+or a couple of bots, it's not ideal for a service with many potential bots. And these solutions aren't very flexible
+when it comes to [the webhooks feature](https://core.telegram.org/bots/api#setwebhook) that Telegram bots work with.
 
 So instead, here is a simplified module to interact with Telegram & users with a focus on flexibility.
 
 ```js
 var telegram = require('telegram-hero');
-telegram.send({
-  token: '<insert-your-bot-token>',
-  to: '<insert-a-chat-id>',
-  method: 'sendMessage',
-  message: {
-    text: 'This are not the droids that you are looking for, move along.'
-  }
-}, callback);
+telegram.send(
+  {
+    token: '<insert-your-bot-token>',
+    to: '<insert-a-chat-id>',
+    method: 'sendMessage',
+    message: {
+      text: 'This are not the droids that you are looking for, move along.',
+    },
+  },
+  callback,
+);
 ```
 
 You can use this with as many bots and as many webhooks as you like.
 
 ```js
-telegram.send({
-  token: '<insert-your-bot-token>',
-  to: '<insert-a-chat-id>',
-  method: 'sendPhoto',
-  message: {
-    photo: fs.createReadStream(path.join(__dirname, 'droids.jpeg')),
-    caption: 'This door is locked, move onto the next one'
-  }
-}, callback);
+telegram.send(
+  {
+    token: '<insert-your-bot-token>',
+    to: '<insert-a-chat-id>',
+    method: 'sendPhoto',
+    message: {
+      photo: fs.createReadStream(path.join(__dirname, 'droids.jpeg')),
+      caption: 'This door is locked, move onto the next one',
+    },
+  },
+  callback,
+);
 ```
 
-It's built on top of the popular [`request`](https://github.com/request/request) module, to allow you to send attachments as streams, like above.
+It's built on top of the popular [`request`](https://github.com/request/request) module, to allow you to send
+attachments as streams, like above.
 
-This API doesn't make any assumptions of your existing codebase, so if you require sending many messages to many users you'll need to add `async` or an equivalent control-flow library to assist you. Take care when using `Promise.all` if the order of the messages matter to you 😉
+This API doesn't make any assumptions of your existing codebase, so if you require sending many messages to many users
+you'll need to add `async` or an equivalent control-flow library to assist you. Take care when using `Promise.all` if
+the order of the messages matter to you 😉
 
 There's also support for incoming webhooks, to make handling multiple bots relatively easy:
 
@@ -70,11 +85,11 @@ app.post(
       'amazing-bot': {
         name: 'The Amazing Bot',
         auth: '4b238abe064c9d6c860e386d8cbf8cd2',
-        token: '<insert-this-bots-token>'
+        token: '<insert-this-bots-token>',
       },
 
       // Or, if you're lazy, you can use
-      'simple-bot': '4b238abe064c9d6c860e386d8cbf8cd2'
+      'simple-bot': '4b238abe064c9d6c860e386d8cbf8cd2',
       // Which will be constructed into a proper bot similar to:
       // 'simple-bot': {
       //   name: 'simple-bot',
@@ -82,7 +97,7 @@ app.post(
       // }
       // HOWEVER this isn't advised, since the authentication will be
       //   *anything* that satisfies :bot_auth!
-    }
+    },
   }),
   function (req, res, next) {
     // req.telegram.message is the message object.
@@ -93,14 +108,14 @@ app.post(
     req.telegram.reply({
       method: 'sendMessage',
       message: {
-        text: 'Thanks for the reply! Have a nice day'
-      }
+        text: 'Thanks for the reply! Have a nice day',
+      },
     });
 
     res.status(200);
     // Don't forgot to reply to Telegram
     //   so they know the message was received correctly!
-  }
+  },
 );
 
 /**
@@ -117,23 +132,24 @@ app.post(
       'amazing-bot': {
         name: 'The Amazing Bot',
         auth: '4b238abe064c9d6c860e386d8cbf8cd2',
-        token: '<insert-this-bots-token>'
-      }
+        token: '<insert-this-bots-token>',
+      },
     },
     bot_name_param: 'telegram_bot_slug',
-    bot_auth_param: 'telegram_bot_auth'
+    bot_auth_param: 'telegram_bot_auth',
   }),
   function (req, res, next) {
     // Or, if you want to reply directly to Telegram
     //   you can do so like you usually would:
     res.status(200).json({
       method: 'sendMessage',
-      text: 'Thanks for the reply! Have a nice day'
+      text: 'Thanks for the reply! Have a nice day',
     });
-  }
+  },
 );
 
 app.listen(3000);
 ```
 
-And that's it! This is used in a personal project of mine, which sends me notifications from my online services via Telegram 💪
+And that's it! This is used in a personal project of mine, which sends me notifications from my online services via
+Telegram 💪
