@@ -26,19 +26,13 @@ jobs:
         with:
           cache: pnpm
           node-version: 22.x
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.4.1"
-          bundler-cache: true
 
       - run: pnpm install --frozen-lockfile
-
-      - run: pnpm run build:css
-      - run: bundle exec jekyll build
+      - run: pnpm run build
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./_site
+          path: .vitepress/dist
 
   deploy:
     name: Deploy

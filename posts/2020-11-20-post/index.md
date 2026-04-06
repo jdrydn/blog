@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Apple introduces the M1"
+description: "(The Verge) A collection of links around Apple's new Silicon chip, detailing power & performance"
+date: 2020-11-20
+---
+
+# Apple introduces the M1
+
+<WebLink href="https://www.theverge.com/2020/11/10/21558095/apple-silicon-m1-chip-arm-macs-soc-charge-power-efficiency-mobile-processor" title="Apple says new Arm-based M1 chip offers the ‘longest battery life ever in a Mac’" description="Apple has high hopes for its new machines." image="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/22027029/Apple_new_m1_chip_graphic_11102020.jpg?quality=90&amp;strip=all&amp;crop=0%2C11.129620815485%2C100%2C77.740758369031&amp;w=1200" icon="https://www.theverge.com/static-assets/icons/favicon.ico" icon-alt="The Verge" />
+
+<WebLink href="https://www.theverge.com/2020/11/10/21559228/apple-new-macbook-air-pro-difference-arm-m1-fan-thermal-performance" title="The biggest difference between the new MacBook Air and MacBook Pro is a fan" description="And the Air is still thicker" image="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/22027542/vlcsnap_2020_11_10_13h45m12s055.png?quality=90&amp;strip=all&amp;crop=0%2C3.4613147178592%2C100%2C93.077370564282&amp;w=1200" icon="https://www.theverge.com/static-assets/icons/favicon.ico" icon-alt="The Verge" />
+
+<WebLink href="https://www.theverge.com/21569603/apple-macbook-air-m1-review-price-specs-features-arm-silicon" title="Apple MacBook Air with M1 review: new chip, no problem" description="We are stunned by how good this laptop is." image="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/22048042/vpavic_4291_20201113_0337_Edit.jpg?quality=90&amp;strip=all&amp;crop=0%2C10.675153636777%2C100%2C78.649692726446&amp;w=1200" icon="https://www.theverge.com/static-assets/icons/favicon.ico" icon-alt="The Verge" />
+
+<WebLink href="https://www.theverge.com/21570497/apple-macbook-pro-2020-m1-review" title="Apple MacBook Pro with M1 review: flexing Arm" description="The fancier Apple Silicon laptop doesn’t offer much over the less expensive Air." image="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/22038526/akramer_201113_4290_0021.0.jpg?quality=90&amp;strip=all&amp;crop=0%2C10.732984293194%2C100%2C78.534031413613&amp;w=1200" icon="https://www.theverge.com/static-assets/icons/favicon.ico" icon-alt="The Verge" />
+
+<WebLink href="https://www.theverge.com/2020/11/13/21563242/apple-m1-silicon-chip-arm-macbook-rosetta-confidence" title="Apple is astonishingly confident in its new M1 Mac processors" description="Big promises — can Apple deliver?" image="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/22029946/apple_m1_board.jpg?quality=90&amp;strip=all&amp;crop=0%2C7.1999623144322%2C100%2C85.600075371136&amp;w=1200" icon="https://www.theverge.com/static-assets/icons/favicon.ico" icon-alt="The Verge" />
+
+<WebLink href="https://www.theverge.com/2020/11/18/21574207/how-to-install-run-any-iphone-ipad-app-m1-mac" title="Here’s how to run any iOS app you own on Apple’s new M1 Macs" description="It’s buggy, it’s weird, and it’s kind of fun" image="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/22051518/Screen_Shot_2020_11_18_at_2.50.53_PM.png?quality=90&amp;strip=all&amp;crop=0%2C8.1151832460733%2C100%2C83.769633507853&amp;w=1200" icon="https://www.theverge.com/static-assets/icons/favicon.ico" icon-alt="The Verge" />

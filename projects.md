@@ -1,0 +1,72 @@
+---
+layout: simple
+title: Projects
+heading: I've worked on a couple of projects
+---
+
+<div class="max-w-2xl space-y-20">
+  <section class="md:border-l md:border-zinc-100 md:pl-6">
+    <div class="md:ml-3">
+      <article class="group relative flex flex-col items-start">
+        <h3 class="text-base font-semibold tracking-tight text-zinc-800">
+          <div class="absolute -inset-x-4 -inset-y-6 z-0 scale-95 bg-zinc-50 opacity-0 transition group-hover:scale-100 group-hover:opacity-100 sm:-inset-x-6 sm:rounded-2xl"></div>
+          <a href="https://github.com/someimportantcompany" target="_blank">
+            <span class="absolute -inset-x-4 -inset-y-6 z-20 sm:-inset-x-6 sm:rounded-2xl"></span>
+            <span class="relative z-10">Some Important Company</span>
+          </a>
+        </h3>
+        <p class="relative z-10 mt-2 text-sm text-zinc-600">
+          A collection of open-source tools for you & your projects,
+          including Node.js modules, GitHub Actions & small independent projects.
+        </p>
+        <div aria-hidden="true" class="relative z-10 mt-4 flex items-center text-sm font-medium text-teal-500">
+          Learn more at github.com/someimportantcompany
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" class="ml-1 h-4 w-4 stroke-current"><path d="M6.75 5.75 9.25 8l-2.5 2.25" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="md:border-l md:border-zinc-100 md:pl-6">
+    <div class="md:ml-3">
+      <article class="group relative flex flex-col items-start">
+        <h3 class="text-base font-semibold tracking-tight text-zinc-800">
+          <div class="absolute -inset-x-4 -inset-y-6 z-0 scale-95 bg-zinc-50 opacity-0 transition group-hover:scale-100 group-hover:opacity-100 sm:-inset-x-6 sm:rounded-2xl"></div>
+          <a href="https://app.kodeon.dev" target="_blank">
+            <span class="absolute -inset-x-4 -inset-y-6 z-20 sm:-inset-x-6 sm:rounded-2xl"></span>
+            <span class="relative z-10">Kodeon</span>
+          </a>
+        </h3>
+        <p class="relative z-10 mt-2 text-sm text-zinc-600">
+          A local-first in-memory Python REPL web-application, designed for students & code enthusiasts who need
+          a safe space to write & run code. Code executes & is stored locally - there are no servers, no user
+          accounts, nothing to install, nothing to steal.
+        </p>
+        <p class="relative z-10 mt-2 text-sm text-zinc-600">
+          <img src="/assets/images/projects/kodeon.png" alt="Screenshot of Kodeon" class="rounded">
+        </p>
+        <div aria-hidden="true" class="relative z-10 mt-4 flex items-center text-sm font-medium text-teal-500">
+          Learn more at app.kodeon.dev
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" class="ml-1 h-4 w-4 stroke-current"><path d="M6.75 5.75 9.25 8l-2.5 2.25" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="md:border-l md:border-zinc-100 md:pl-6">
+    <div class="md:ml-3">
+      <article class="group relative flex flex-col items-start">
+        <h3 class="text-base font-semibold tracking-tight text-zinc-800">
+          apisq
+        </h3>
+        <p class="relative z-10 mt-2 text-sm text-zinc-600">
+          What started as an API-portal is being reworked into a collection of standalone open-source services,
+          with a CLI to make installs easy.
+        </p>
+        <p class="relative z-10 mt-2 text-sm text-zinc-600">
+          <span class="inline-flex items-center space-x-2.5 border rounded-full px-3 py-1 text-sm border-amber-200 bg-amber-100/50 text-amber-800">Coming soon</span>
+        </p>
+      </article>
+    </div>
+  </section>
+</div>
