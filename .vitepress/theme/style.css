@@ -43,6 +43,61 @@ body {
   padding: 0;
 }
 
+/* Code block wrapper — positions lang label & copy button */
+div[class*='language-'] {
+  position: relative;
+}
+
+/* Language label */
+div[class*='language-'] .lang {
+  position: absolute;
+  top: 0.75rem;
+  right: 3.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #a1a1aa;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 0.2s;
+}
+
+div[class*='language-']:hover .lang {
+  opacity: 0;
+}
+
+/* Copy button */
+div[class*='language-'] .copy {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid #3f3f46;
+  border-radius: 0.5rem;
+  background-color: #27272a;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23a1a1aa' stroke-width='1.5' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m0 0a2.626 2.626 0 0 1 5.03-.952M8.25 9h.008v.008H8.25V9Z'/%3E%3C/svg%3E");
+  background-size: 1.25rem;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background-color 0.2s, border-color 0.2s;
+}
+
+div[class*='language-']:hover .copy {
+  opacity: 1;
+}
+
+div[class*='language-'] .copy:hover {
+  background-color: #3f3f46;
+  border-color: #52525b;
+}
+
+div[class*='language-'] .copy.copied {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%2334d399' stroke-width='1.5' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='m4.5 12.75 6 6 9-13.5'/%3E%3C/svg%3E");
+  border-color: #34d399;
+}
+
 /* Inline icon for article titles (e.g. GraphQL post) */
 .inline-icon {
   display: inline;
