@@ -3,10 +3,10 @@ layout: employment
 company: muzmatch
 title: muzmatch (2017 → 2018)
 description: >-
-  muzmatch is a dating app where single Muslims meet - similar to apps like Tinder, but focused on
-  the worldwide Muslim community. I worked primarily on adding new features to the platform's API, as well as
-  upgrading & improving existing features to handle an increased user count with the same resources.
-period: "(2017 → 2018)"
+  muzmatch is a dating app where single Muslims meet - similar to apps like Tinder, but focused on the worldwide Muslim
+  community. I worked primarily on adding new features to the platform's API, as well as upgrading & improving existing
+  features to handle an increased user count with the same resources.
+period: '(2017 → 2018)'
 role: Senior Backend Engineer
 logo: /logos/muzmatch.jpg
 screenshot: /assets/images/employment/muzmatch/muzmatch-homepage.png

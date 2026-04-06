@@ -3,7 +3,9 @@ layout: simple
 title: Now
 heading: What's happening now?
 description: A "now page" - merely a snapshot into my world
-intro: 'This is inspired from <a class="underline" href="https://nownownow.com/about"><code>nownownow.com</code></a> - a representation on what is happening in my world.'
+intro:
+  'This is inspired from <a class="underline" href="https://nownownow.com/about"><code>nownownow.com</code></a> - a
+  representation on what is happening in my world.'
 ---
 
 <div class="space-y-20">

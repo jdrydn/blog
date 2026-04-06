@@ -3,16 +3,16 @@ layout: employment
 company: Real Links
 title: Real Links (2019 → 2023)
 description: >-
-  Real Links is a B2B web-application for internal recruiters to "tap into" their employee's networks
-  & identify suitable candidates for open roles. As their first hire, I spent my time building out an MVP prototype
-  into a complete platform for customers, adding in new features in response to customer requests, and supporting
-  existing customers with queries & issues.
-period: "(2019 → 2023)"
+  Real Links is a B2B web-application for internal recruiters to "tap into" their employee's networks & identify
+  suitable candidates for open roles. As their first hire, I spent my time building out an MVP prototype into a complete
+  platform for customers, adding in new features in response to customer requests, and supporting existing customers
+  with queries & issues.
+period: '(2019 → 2023)'
 role: CTO / Lead Developer
 logo: /logos/real-links.jpeg
 screenshot: /assets/images/employment/real-links/reallinks-homepage.png
 screenshot_alt: Real Links homepage (2022)
-screenshot_border: "100"
+screenshot_border: '100'
 badges:
   - { name: Node.js, color: green }
   - { name: Express.js, color: blue }

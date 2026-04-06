@@ -3,18 +3,17 @@ layout: employment
 company: Car Throttle
 title: Car Throttle (2015 → 2017)
 description: >-
-  Car Throttle was "the internet's car community" - what started as a Wordpress site evolved into a
-  social-media~like platform where car enthusiasts would post content about their cars, about car shows & similar.
-  I worked primarily on rebuilding the legacy PHP monolith into a shiny (then new) Node.js application,
-  building out an independent API "microservice" to power a new progressive web-app & set of mobile applications.
-  I also helped build out a custom CMS backed by our API, and helped assemble a small suite of staff tools for
-  the content creators.
-period: "(2015 → 2017)"
+  Car Throttle was "the internet's car community" - what started as a Wordpress site evolved into a social-media~like
+  platform where car enthusiasts would post content about their cars, about car shows & similar. I worked primarily on
+  rebuilding the legacy PHP monolith into a shiny (then new) Node.js application, building out an independent API
+  "microservice" to power a new progressive web-app & set of mobile applications. I also helped build out a custom CMS
+  backed by our API, and helped assemble a small suite of staff tools for the content creators.
+period: '(2015 → 2017)'
 role: Software Engineer / Senior Software Engineer
 logo: /logos/car-throttle.jpg
 screenshot: /assets/images/employment/car-throttle/car-throttle-homepage.png
 screenshot_alt: Car Throttle homepage (2017)
-screenshot_border: "500"
+screenshot_border: '500'
 badges:
   - { name: Node.js, color: green }
   - { name: Express.js, color: blue }

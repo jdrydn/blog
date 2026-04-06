@@ -3,18 +3,18 @@ layout: employment
 company: Tech City Ventures
 title: Tech City Ventures (2022 → 2023)
 description: >-
-  Tech City Ventures was a collection of minds building custom applications & services for clients,
-  founded by a friend from university. I spent my time here working on various platforms & services for clients, as
-  well as managing a team of software developer contractors.
-period: "(2022 → 2023)"
+  Tech City Ventures was a collection of minds building custom applications & services for clients, founded by a friend
+  from university. I spent my time here working on various platforms & services for clients, as well as managing a team
+  of software developer contractors.
+period: '(2022 → 2023)'
 role: Head of Technology
 logo: /logos/techcityventures.jpg
 screenshot: /assets/images/employment/techcityventures/techcityventures-homepage.png
 screenshot_alt: TechCityVentures homepage (2023)
-screenshot_border: "100"
+screenshot_border: '100'
 screenshot2: /assets/images/employment/techcityventures/figfinance-homepage.png
 screenshot2_alt: FigFinance developer portal (2023)
-screenshot2_border: "100"
+screenshot2_border: '100'
 badges:
   - { name: Node.js, color: green }
   - { name: Express.js, color: blue }

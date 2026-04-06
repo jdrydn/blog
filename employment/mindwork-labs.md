@@ -3,11 +3,11 @@ layout: employment
 company: Mindwork Labs
 title: Mindwork Labs (2012 → 2014)
 description: >-
-  Mindwork Labs was my first developer role back when I was at University. I worked here for a summer
-  & was fortunate enough to return for my year-in-industry placement. During my time here, I was working across the
-  full-stack to build community features & services to support visitors, building alongside some of the brightest
-  minds in software development.
-period: "(2012 → 2014)"
+  Mindwork Labs was my first developer role back when I was at University. I worked here for a summer & was fortunate
+  enough to return for my year-in-industry placement. During my time here, I was working across the full-stack to build
+  community features & services to support visitors, building alongside some of the brightest minds in software
+  development.
+period: '(2012 → 2014)'
 role: Junior Developer / Senior Developer
 logo: /logos/mindworklabs.png
 screenshot: /assets/images/employment/mindwork-labs/mindwork-labs-homepage.png
