@@ -24,6 +24,25 @@ body {
   width: 100%;
 }
 
+/* Shiki code blocks — dark theme */
+.shiki,
+.vp-code {
+  background-color: #18181b;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  overflow-x: auto;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.7;
+}
+
+.shiki code {
+  background: transparent;
+  padding: 0;
+}
+
 /* Inline icon for article titles (e.g. GraphQL post) */
 .inline-icon {
   display: inline;

@@ -13,6 +13,10 @@ export default defineConfig({
 
   cleanUrls: true,
 
+  markdown: {
+    theme: 'github-dark',
+  },
+
   srcExclude: ['README.md'],
 
   themeConfig: {
