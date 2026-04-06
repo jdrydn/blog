@@ -1,4 +1,4 @@
-name: Main Deploy
+name: CD
 
 on:
   push:
@@ -12,8 +12,8 @@ permissions:
   id-token: write
 
 jobs:
-  build:
-    name: Build
+  cd:
+    name: CD
     runs-on: ubuntu-latest
     concurrency:
       group: cd-build
@@ -21,14 +21,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
         with:
+          node-version: 24
           cache: pnpm
-          node-version: 22.x
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
+      - run: pnpm build
 
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -36,7 +35,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: build
+    needs: cd
     runs-on: ubuntu-latest
     concurrency:
       group: cd-deploy
@@ -45,5 +44,5 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/deploy-pages@v4
-        id: deployment
+      - id: deployment
+        uses: actions/deploy-pages@v4
