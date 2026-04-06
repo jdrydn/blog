@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Apple introduces the M1"
+title: 'Apple introduces the M1'
 description: "(The Verge) A collection of links around Apple's new Silicon chip, detailing power & performance"
 date: 2020-11-20
 ---

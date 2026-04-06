@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Blog as you learn"
+title: 'Blog as you learn'
 description: "(Ash Furrow) It's easier to write about a topic when it's fresh in your mind."
 date: 2020-11-29
 ---
@@ -11,8 +11,11 @@ date: 2020-11-29
 
 > It's easier to write about a topic when it's fresh in your mind.
 >
-> If you mean to write about something later, it can easily become an item on a todo list that you're likely to put off and [not get to](https://github.com/ashfurrow/blog/issues/188#issuecomment-315918906).
+> If you mean to write about something later, it can easily become an item on a todo list that you're likely to put off
+> and [not get to](https://github.com/ashfurrow/blog/issues/188#issuecomment-315918906).
 >
 > If you're able to fit writing into your schedule - please try to.
 >
-> Even if you keep it private, writing is a wonderful way to document knowledge and gain a deeper understanding of the subject. I encourage you to try it out, even if writing hasn't been a strength for you. I have faith you'll produce something of value.
+> Even if you keep it private, writing is a wonderful way to document knowledge and gain a deeper understanding of the
+> subject. I encourage you to try it out, even if writing hasn't been a strength for you. I have faith you'll produce
+> something of value.

@@ -1,68 +1,102 @@
 ---
 layout: post
-title: "The custom domain problem for SaaS on PaaS"
-description: "Custom domains is an interesting problem for most SaaS business, especially those running on large PaaS/IaaS providers such as AWS or GCP. The problem is, PaaS doesn't help when you want to run custom domains for your SaaS."
+title: 'The custom domain problem for SaaS on PaaS'
+description:
+  "Custom domains is an interesting problem for most SaaS business, especially those running on large PaaS/IaaS
+  providers such as AWS or GCP. The problem is, PaaS doesn't help when you want to run custom domains for your SaaS."
 date: 2023-01-23
 ---
 
 # The custom domain problem for SaaS on PaaS
 
-Custom domains is an interesting problem for most SaaS business, especially those running on large PaaS/IaaS providers such as AWS or GCP.
+Custom domains is an interesting problem for most SaaS business, especially those running on large PaaS/IaaS providers
+such as AWS or GCP.
 
-The problem isn't so much around the custom domain itself - you can point a domain anywhere. It's in fact around HTTPS requests, specifically **SSL Certificate Generation** & [**SSL termination**](https://docs.nginx.com/nginx/admin-guide/security-controls/terminating-ssl-http/).
+The problem isn't so much around the custom domain itself - you can point a domain anywhere. It's in fact around HTTPS
+requests, specifically **SSL Certificate Generation** &
+[**SSL termination**](https://docs.nginx.com/nginx/admin-guide/security-controls/terminating-ssl-http/).
 
 Let's focus on AWS, and explore the problem by setting up a fictional scenario that's heavily based on real life:
 
 - You're running a SaaS web-hosting platform, e.g. **newwebhost.com**.
 - Users can create websites as subdomains, e.g. **jdrydn.newwebhost.com**.
-- All assets are served from that domain, e.g. `/static/css` `/static/js` `/images` & if there's an API, it's likely served from `/api`.
-- You want to create a custom domain feature, where users can setup their own custom domain in a self-serve-like fashion, without opening support tickets or similar.
-    - Your customer wants to point `customerdomain.com` to `customersite.newwebhost.com` benefitting from all your features, including SSL.
+- All assets are served from that domain, e.g. `/static/css` `/static/js` `/images` & if there's an API, it's likely
+  served from `/api`.
+- You want to create a custom domain feature, where users can setup their own custom domain in a self-serve-like
+  fashion, without opening support tickets or similar.
+  - Your customer wants to point `customerdomain.com` to `customersite.newwebhost.com` benefitting from all your
+    features, including SSL.
 
 And behind the scenes, there is:
 
-- A Cloudfront distribution setup to serve the relevant content, with the alternative domains property set to `*.newwebhost.com`.
+- A Cloudfront distribution setup to serve the relevant content, with the alternative domains property set to
+  `*.newwebhost.com`.
 - An ACM certificate setup for `newwebhost.com` & `*.newwebhost.com` applied to the Cloudfront distribution.
 - Cloudfront has a behaviour configured for `/static` to pass requests to S3.
-- And another behaviour configured to send `/api` requests to the Backend API-Gateway, which calls a Lambda function to read/write data from/to your database.
-- And finally a default behaviour configured to pass requests to your Frontend API-Gateway, which calls a Lambda function to render the initial page for the customer (with handy meta tags for SEO/social embeds).
+- And another behaviour configured to send `/api` requests to the Backend API-Gateway, which calls a Lambda function to
+  read/write data from/to your database.
+- And finally a default behaviour configured to pass requests to your Frontend API-Gateway, which calls a Lambda
+  function to render the initial page for the customer (with handy meta tags for SEO/social embeds).
 
-There are a few common solutions to this problem, none of which are standard & each has it's own advantage & disadvantages:
+There are a few common solutions to this problem, none of which are standard & each has it's own advantage &
+disadvantages:
 
-1. A Cloudfront distribution & ACM certificate **per custom domain**, pointing to internal infrastructure, just like the main Cloudfront distribution.
-2. A Cloudfront distribution & ACM certificate **per custom domain**, proxying requests to the main Cloudfront distribution.
-3. An EC2 instance running a proxy server for **all custom domains**, proxying requests to the main Cloudfront distribution.
+1. A Cloudfront distribution & ACM certificate **per custom domain**, pointing to internal infrastructure, just like the
+   main Cloudfront distribution.
+2. A Cloudfront distribution & ACM certificate **per custom domain**, proxying requests to the main Cloudfront
+   distribution.
+3. An EC2 instance running a proxy server for **all custom domains**, proxying requests to the main Cloudfront
+   distribution.
 
 And finally, to throw a crazy solution on at the end:
 
-1. Cloudflare for SaaS pointing to a Cloudfront distribution & ACM certificate for **all custom domains**, proxying requests like either 1 or 2.
+1. Cloudflare for SaaS pointing to a Cloudfront distribution & ACM certificate for **all custom domains**, proxying
+   requests like either 1 or 2.
 
 Let's explore the first 3 in detail, and then work our way through the last.
 
 ### **1. A Cloudfront distribution & ACM certificate per custom domain, pointing to internal infrastructure, just like the main Cloudfront distribution.**
 
-For SaaS platforms with a single-digit number of custom domains (likely for very large or very demanding customers) this could be a good option. It's quick & easy to setup, it could even be [written in Cloudformation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudfront-distribution.html) ([within reason](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-certificatemanager-certificate.html)).
+For SaaS platforms with a single-digit number of custom domains (likely for very large or very demanding customers) this
+could be a good option. It's quick & easy to setup, it could even be
+[written in Cloudformation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudfront-distribution.html)
+([within reason](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-certificatemanager-certificate.html)).
 
-However, changes made to the main Cloudfront distribution (as specific new features are built or new infrastructure is required) need to be replicated across all custom-domain Cloudfront distributions, likely through a manual process unless there's some serious work to automate distribution updates!
+However, changes made to the main Cloudfront distribution (as specific new features are built or new infrastructure is
+required) need to be replicated across all custom-domain Cloudfront distributions, likely through a manual process
+unless there's some serious work to automate distribution updates!
 
-And there's no duplicated traffic - traffic going through the custom-domain Cloudfront distribution won't be going through the main Cloudfront distribution, so no increase in charges!
+And there's no duplicated traffic - traffic going through the custom-domain Cloudfront distribution won't be going
+through the main Cloudfront distribution, so no increase in charges!
 
-Also worth noting, you'll need two DNS records per client. One for the Cloudfront distribution and another for the ACM DNS validation. Handing over multiple DNS record to a customer isn't out of the norm (especially if you obscure them [like this post suggests](https://dev.to/authress/adding-custom-domains-to-your-saas-4hci)) but it's more setup for your business to maintain - especially at scale!
+Also worth noting, you'll need two DNS records per client. One for the Cloudfront distribution and another for the ACM
+DNS validation. Handing over multiple DNS record to a customer isn't out of the norm (especially if you obscure them
+[like this post suggests](https://dev.to/authress/adding-custom-domains-to-your-saas-4hci)) but it's more setup for your
+business to maintain - especially at scale!
 
 ### **2. A Cloudfront distribution & ACM certificate per custom domain, proxying requests to the main Cloudfront distribution.**
 
-For SaaS platforms with a a high number of custom domains this could be a good option. It's also quick & easy to setup & it could be [written in Cloudformation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudfront-distribution.html) ([within reason](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-certificatemanager-certificate.html)).
+For SaaS platforms with a a high number of custom domains this could be a good option. It's also quick & easy to setup &
+it could be
+[written in Cloudformation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudfront-distribution.html)
+([within reason](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-certificatemanager-certificate.html)).
 
-New changes made to the main Cloudfront distribution wouldn't need to be replicated, as all custom-domain Cloudfront distributions would be passing through the main Cloudfront distribution - which sounds great, until you realise this setup duplicates all the CDN traffic.
-Traffic going through the custom-domain Cloudfront distribution would also be going through the main Cloudfront distribution, so double-bandwidth charges.
+New changes made to the main Cloudfront distribution wouldn't need to be replicated, as all custom-domain Cloudfront
+distributions would be passing through the main Cloudfront distribution - which sounds great, until you realise this
+setup duplicates all the CDN traffic. Traffic going through the custom-domain Cloudfront distribution would also be
+going through the main Cloudfront distribution, so double-bandwidth charges.
 
 And with this option, you'll need two DNS records per client just like **Solution 1**.
 
 ### **3. An EC2 instance running a proxy server for all custom domains, proxying requests to the main Cloudfront distribution.**
 
-Similar to **Solution 2**, this could be a good option for SaaS platforms who don't want to have to update a number of Cloudfront distributions when updating the main Cloudfront distribution behaviours.
+Similar to **Solution 2**, this could be a good option for SaaS platforms who don't want to have to update a number of
+Cloudfront distributions when updating the main Cloudfront distribution behaviours.
 
-You'd configure/maintain an EC2 instance running [Caddy](https://caddyserver.com), or a self-made [nginx+LetsEncrypt](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04) setup, with an Elastic IP attached to it, which would then act as both an SSL certificate generator & a proxy to your main Cloudfront distribution:
+You'd configure/maintain an EC2 instance running [Caddy](https://caddyserver.com), or a self-made
+[nginx+LetsEncrypt](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04)
+setup, with an Elastic IP attached to it, which would then act as both an SSL certificate generator & a proxy to your
+main Cloudfront distribution:
 
 ```
 server {
@@ -84,23 +118,38 @@ server {
 }
 ```
 
-For example, say your EC2 instance is running at `11.12.13.14`. You'd probably setup `customers.newwebhost.com` (an `A` record resolving to `11.12.13.14`) (perhaps an `AAAA` record too?) and ask customers to point their custom domains at `customers.newwebhost.com`. This would then configure an SSL cert for each custom-domain & act as a proxy to your main Cloudfront distribution.
+For example, say your EC2 instance is running at `11.12.13.14`. You'd probably setup `customers.newwebhost.com` (an `A`
+record resolving to `11.12.13.14`) (perhaps an `AAAA` record too?) and ask customers to point their custom domains at
+`customers.newwebhost.com`. This would then configure an SSL cert for each custom-domain & act as a proxy to your main
+Cloudfront distribution.
 
-Traffic going through the custom-domain EC2 instance would also be going through the main Cloudfront distribution, so you risk double-bandwidth charges again.
-And a high amount of traffic from any (number of) custom domain(s) could result in downtime, so you'd also have to consider (a) running multiple EC2/ECS instances behind a network load balancer (even more cost!) or (b) upgrading the EC2 instance to larger / expensive instance types!
+Traffic going through the custom-domain EC2 instance would also be going through the main Cloudfront distribution, so
+you risk double-bandwidth charges again. And a high amount of traffic from any (number of) custom domain(s) could result
+in downtime, so you'd also have to consider (a) running multiple EC2/ECS instances behind a network load balancer (even
+more cost!) or (b) upgrading the EC2 instance to larger / expensive instance types!
 
 ### **4. Cloudflare for SaaS pointing to a Cloudfront distribution & ACM certificate for all custom domains, proxying requests like either 1 or 2.**
 
-Cloudflare recently opened up [Cloudflare for SaaS](https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/) to all plans, offering 100 custom domains for free. As an admin of a Cloudflare site, you can add custom domain support so customers have a single DNS record (of your choosing) (e.g. `yourcustomer.ssl.newwebhost.com`) which can pass requests through to your application.
+Cloudflare recently opened up
+[Cloudflare for SaaS](https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/) to all plans,
+offering 100 custom domains for free. As an admin of a Cloudflare site, you can add custom domain support so customers
+have a single DNS record (of your choosing) (e.g. `yourcustomer.ssl.newwebhost.com`) which can pass requests through to
+your application.
 
-However, this doesn't quite solve everything. Cloudfront requires an SSL cert & all custom domains to be listed beforehand, as they use [SNI](https://en.wikipedia.org/wiki/Server_Name_Indication) to share physical resources between customers. In theory, Cloudflare for SaaS could make **Solution 1** viable, where all custom domains point to a single Cloudfront distribution for those customers.
+However, this doesn't quite solve everything. Cloudfront requires an SSL cert & all custom domains to be listed
+beforehand, as they use [SNI](https://en.wikipedia.org/wiki/Server_Name_Indication) to share physical resources between
+customers. In theory, Cloudflare for SaaS could make **Solution 1** viable, where all custom domains point to a single
+Cloudfront distribution for those customers.
 
-There's an interesting comment in “[Introducing SSL for SaaS](https://blog.cloudflare.com/introducing-ssl-for-saas/)” blog-post that I thought could have the answer:
+There's an interesting comment in “[Introducing SSL for SaaS](https://blog.cloudflare.com/introducing-ssl-for-saas/)”
+blog-post that I thought could have the answer:
 
 ![](./image1.png)
 
-“*Yes, we encourage you to use the [Full or Strict SSL mode](https://support.cloudflare.com/hc/en-us/articles/200170416-What-do-the-SSL-options-mean-) so that traffic sent to your origin utilizes HTTPS.*”
-”*Our Origin CA product can be used to generate these certificates for use with Strict mode.*”
+“_Yes, we encourage you to use the
+[Full or Strict SSL mode](https://support.cloudflare.com/hc/en-us/articles/200170416-What-do-the-SSL-options-mean-) so
+that traffic sent to your origin utilizes HTTPS._” ”_Our Origin CA product can be used to generate these certificates
+for use with Strict mode._”
 
 This suggests that:
 
@@ -117,21 +166,24 @@ This suggests that:
 > Encrypts end-to-end, but requires a trusted CA or Cloudflare Origin CA certificate on the server.
 
 - Also consider that (at time of writing):
-    - Cloudfront supports up to 100 alternative domains per distribution.
-    - ACM supports 100 domains per certificate.
-    - … And Cloudflare Origin Certs support 100 domains per certificate.
+  - Cloudfront supports up to 100 alternative domains per distribution.
+  - ACM supports 100 domains per certificate.
+  - … And Cloudflare Origin Certs support 100 domains per certificate.
 
 So here's the crazy idea.. Could we use a single script to:
 
 - Generate a new Cloudflare Origin certificate for up to 100 custom domains.
 - Import that certificate into ACM.
 - Update the custom-domain Cloudfront distribution:
-    - With the new certificate from ACM
-    - And set the list of custom-domains this certificate exports.
+  - With the new certificate from ACM
+  - And set the list of custom-domains this certificate exports.
 
-Because with this, the customer has one DNS record (to Cloudflare), we have one Cloudfront distribution for up to 100 custom domains which can point to existing infrastructure behind-the-scenes, and then we only have to update it in two places with no duplicate bandwidth traffic!
+Because with this, the customer has one DNS record (to Cloudflare), we have one Cloudfront distribution for up to 100
+custom domains which can point to existing infrastructure behind-the-scenes, and then we only have to update it in two
+places with no duplicate bandwidth traffic!
 
-And we'd only need to look after a ratio of 1-100 Cloudfront distributions to custom domains, which sounds much better than 1-1 Cloudfront/custom-domain 😬
+And we'd only need to look after a ratio of 1-100 Cloudfront distributions to custom domains, which sounds much better
+than 1-1 Cloudfront/custom-domain 😬
 
 In theory, this can work:
 
@@ -140,9 +192,11 @@ In theory, this can work:
 - ACM has an API to import a certificate.
 - Cloudfront has an API to update the certificate ARN & alternative domains on a distribution.
 
-Even better, we can get this working with the existing AWS account in use, automating this with [Lambda functions](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html).
+Even better, we can get this working with the existing AWS account in use, automating this with
+[Lambda functions](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html).
 
-But before we kick off with this, let's run through the process by hand with all the API keys & other credentials sorted:
+But before we kick off with this, let's run through the process by hand with all the API keys & other credentials
+sorted:
 
 First create the Custom Hostname in Cloudflare for the (sub)domain:
 
@@ -196,28 +250,49 @@ Content-Type: application/json
 }
 ```
 
-> Failed to validate requested hostname customerdomain.com: This zone is either not part of your account, or you do not have access to it. Please contact support if using a multi-user organization.
+> Failed to validate requested hostname customerdomain.com: This zone is either not part of your account, or you do not
+> have access to it. Please contact support if using a multi-user organization.
 
 **⛔ And that's as far as we go!**
 
 Yeah 😐
 
-Generating self-signed origin certificates that (only) Cloudflare trusts definitely seems like the way forward here. Your customers use a single DNS record to configure their custom domains, benefitting from SSL & all the other benefits of a Cloudflare-run service, whilst you get reduced complexity, reduced management & all the benefits of Cloudflare too.
+Generating self-signed origin certificates that (only) Cloudflare trusts definitely seems like the way forward here.
+Your customers use a single DNS record to configure their custom domains, benefitting from SSL & all the other benefits
+of a Cloudflare-run service, whilst you get reduced complexity, reduced management & all the benefits of Cloudflare too.
 
-But Cloudflare, for all that “developer-focus” they're so proud about, their APIs aren't that great. It appears to be well-documented but they don't marry up to the actual APIs - for example, when requesting the custom hostname `"type": "dv"` isn't mentioned in the documentation but is used the equivalent Cloudflare Dashboard request, which is how I know to include it.
+But Cloudflare, for all that “developer-focus” they're so proud about, their APIs aren't that great. It appears to be
+well-documented but they don't marry up to the actual APIs - for example, when requesting the custom hostname
+`"type": "dv"` isn't mentioned in the documentation but is used the equivalent Cloudflare Dashboard request, which is
+how I know to include it.
 
-And then there's the `400 Bad Request` message. I can't create an origin certificate as their blog post suggests because I haven't add that domain to my account. I'm not sure I understand the wider security concern here: If I want to generate a certificate to include **apple.com** that should be fine given I can't create a zone or configure DNS for said domain I don't own, plus the key for this cert should be stored against my zone and origin certificates should be only verified by Cloudflare & rejected by the browser?
+And then there's the `400 Bad Request` message. I can't create an origin certificate as their blog post suggests because
+I haven't add that domain to my account. I'm not sure I understand the wider security concern here: If I want to
+generate a certificate to include **apple.com** that should be fine given I can't create a zone or configure DNS for
+said domain I don't own, plus the key for this cert should be stored against my zone and origin certificates should be
+only verified by Cloudflare & rejected by the browser?
 
 If I were Cloudflare, I'd do one of these to rectify this:
 
-- Let customers generate origin certificates for domains they don't directly have a zone for, or at least have tried to configure as a custom hostname. The use-case is clear here: I'd like Strict SSL for my custom hostname using a Cloudflare origin server certificate. Hell, go the extra mile & auto-generate a set of Cloudflare origin server certificates that cover all custom hostnames on this zone (in batches of 100?!)!
-- Auto-rewrite the `Host` header based on the fallback origin server for custom hostnames, so `customerdomain.com` is translated automagically to `yourcustomer.ssl.newwebhost.com`. Most applications have good support for `X-Forwarded-Host` & on our PaaS provider we can easily add support for `*.ssl.newwebhost.com`!
+- Let customers generate origin certificates for domains they don't directly have a zone for, or at least have tried to
+  configure as a custom hostname. The use-case is clear here: I'd like Strict SSL for my custom hostname using a
+  Cloudflare origin server certificate. Hell, go the extra mile & auto-generate a set of Cloudflare origin server
+  certificates that cover all custom hostnames on this zone (in batches of 100?!)!
+- Auto-rewrite the `Host` header based on the fallback origin server for custom hostnames, so `customerdomain.com` is
+  translated automagically to `yourcustomer.ssl.newwebhost.com`. Most applications have good support for
+  `X-Forwarded-Host` & on our PaaS provider we can easily add support for `*.ssl.newwebhost.com`!
 
 And what could AWS do to solve this problem? That's easy:
 
-- Let a Cloudfront distribution support a list of alternate domains and a list of matching certificates. Then each custom domain can be matched to its own certificate, and added/removed independently of other domains.
-- “AWS for SaaS”? Why not a Cloudfront-like product where the SaaS platform in question can add a new domain, get back a single CNAME value, which will generate a SSL cert on the fly for this domain & proxy it to a Cloudfront distribution with the `Host` header fixed & `X-Forwarded-Host` set!
+- Let a Cloudfront distribution support a list of alternate domains and a list of matching certificates. Then each
+  custom domain can be matched to its own certificate, and added/removed independently of other domains.
+- “AWS for SaaS”? Why not a Cloudfront-like product where the SaaS platform in question can add a new domain, get back a
+  single CNAME value, which will generate a SSL cert on the fly for this domain & proxy it to a Cloudfront distribution
+  with the `Host` header fixed & `X-Forwarded-Host` set!
 
 ---
 
-I'm looking at reworking this plan with Cloudfront & ACM on their own (sorry Cloudflare?), but it relies on the customer adding 2 DNS records & **keeping both active** on the domain 🤷‍♂️ It also requires waiting for ACM to verify the new domain before Cloudfront will accept the certificate, which is frustrating as customers will typically set both DNS records at the same time & have to wait for ACM's validator to confirm the certificate is good to go 🤦‍♂️
+I'm looking at reworking this plan with Cloudfront & ACM on their own (sorry Cloudflare?), but it relies on the customer
+adding 2 DNS records & **keeping both active** on the domain 🤷‍♂️ It also requires waiting for ACM to verify the new
+domain before Cloudfront will accept the certificate, which is frustrating as customers will typically set both DNS
+records at the same time & have to wait for ACM's validator to confirm the certificate is good to go 🤦‍♂️

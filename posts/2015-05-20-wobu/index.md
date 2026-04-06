@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Wöbu"
-description: "\"What about you\" - reactionary news app"
+title: 'Wöbu'
+description: '"What about you" - reactionary news app'
 date: 2015-05-20
 ---
 
@@ -9,12 +9,19 @@ date: 2015-05-20
 
 ![Promo screen for the app](./app.jpg)
 
-**Wöbu** - “*what about you*” - was an app for users looking to react in real-time to events or friends posts by creating an animated GIF of their expression.
+**Wöbu** - “_what about you_” - was an app for users looking to react in real-time to events or friends posts by
+creating an animated GIF of their expression.
 
-The backend platform was one of my earliest production-level projects written in NodeJS, although realistically all it did was execute MySQL stored procedures & store images to specific locations on Rackspace's CDN. Some of the MySQL stored procedures were rather interesting, ranging from fetching entire comment threads with a single query (and then some clever sorting at the API layer) to returning chronological feeds with live engagement numbers.
+The backend platform was one of my earliest production-level projects written in NodeJS, although realistically all it
+did was execute MySQL stored procedures & store images to specific locations on Rackspace's CDN. Some of the MySQL
+stored procedures were rather interesting, ranging from fetching entire comment threads with a single query (and then
+some clever sorting at the API layer) to returning chronological feeds with live engagement numbers.
 
-The app itself was built by the wonderful [@wakachamo](https://twitter.com/wakachamo), and it was awesome to work in such a tight development environment, with the occasional accent breakout & reddit post to keep us entertained well into the early hours of the morning!
+The app itself was built by the wonderful [@wakachamo](https://twitter.com/wakachamo), and it was awesome to work in
+such a tight development environment, with the occasional accent breakout & reddit post to keep us entertained well into
+the early hours of the morning!
 
-----
+---
 
-Ultimately it was a fun app that I loved working on, and it convinced me that this profession is where I want to be: building products & services for people to consume on a daily basis ✌️
+Ultimately it was a fun app that I loved working on, and it convinced me that this profession is where I want to be:
+building products & services for people to consume on a daily basis ✌️
