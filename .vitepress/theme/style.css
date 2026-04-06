@@ -39,6 +39,7 @@ body {
 }
 
 .shiki code {
+  color: #e4e4e7;
   background: transparent;
   padding: 0;
 }
