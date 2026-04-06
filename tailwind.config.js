@@ -1,12 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    './_layouts/**/*.html',
-    './_includes/**/*.html',
-    './_posts/**/*.md',
-    './_employment/**/*.html',
-    './*.html',
-    './pages/**/*.html',
+    './.vitepress/theme/**/*.{vue,ts}',
+    './posts/**/*.md',
+    './employment/**/*.md',
+    './*.md',
   ],
   theme: {
     extend: {
@@ -55,7 +53,15 @@ export default {
       },
     },
   },
+  safelist: [
+    // Employment badge colors
+    { pattern: /border-(green|blue|yellow|red|purple|orange|gray|slate|amber|sky|cyan)-200/ },
+    { pattern: /bg-(green|blue|yellow|red|purple|orange|gray|slate|amber|sky|cyan)-100/ },
+    { pattern: /text-(green|blue|yellow|red|purple|orange|gray|slate|amber|sky|cyan)-800/ },
+    // Screenshot borders
+    { pattern: /border-slate-(100|500)/ },
+  ],
   plugins: [
     require('@tailwindcss/typography'),
   ],
-}
+};

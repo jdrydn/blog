@@ -1,19 +1,9 @@
-# Jekyll
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
+# VitePress
+.vitepress/cache/
+.vitepress/dist/
 
 # Dependencies
 node_modules/
-Gemfile.lock
-
-# Build output
-assets/css/style.css
-
-# Old Next.js
-.next/
-out/
 
 # OS
 .DS_Store
