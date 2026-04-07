@@ -14,6 +14,7 @@ const year = new Date().getFullYear();
                   <a href="/posts" class="transition hover:text-teal-500">Posts</a>
                   <a href="/projects" class="transition hover:text-teal-500">Projects</a>
                   <a href="/now" class="transition hover:text-teal-500">Now</a>
+                  <a href="https://wiki.jdrydn.com/" class="transition hover:text-teal-500">Wiki</a>
                 </div>
                 <p class="text-sm text-zinc-400">&copy; {{ year }} jdrydn</p>
               </div>

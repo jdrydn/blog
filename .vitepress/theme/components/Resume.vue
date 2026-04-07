@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { useData } from 'vitepress';
-
-const { theme } = useData();
-
 const employment = [
   { company: 'BPP Education Group', role: 'Principal Software Engineer', href: 'https://www.bpp.com', logo: '/logos/bpp.jpeg', from: '2023', to: 'Present' },
   { company: 'Tech City Ventures', role: 'Head of Technology', href: '/employment/techcityventures', logo: '/logos/techcityventures.jpg', from: '2022', to: '2023' },
@@ -49,7 +45,7 @@ function isExternal(href: string) {
         </dl>
       </li>
     </ol>
-    <a :href="theme.links.linkedin" target="_blank" class="inline-flex items-center gap-2 justify-start rounded-md px-3 py-2 text-sm font-medium text-zinc-900 outline-offset-2 transition active:transition-none bg-zinc-50 hover:bg-zinc-100 active:bg-zinc-100 active:text-zinc-900/60 group mt-6 pl-15 w-full">
+    <a href="https://linkedin.com/in/jdrydn" target="_blank" class="inline-flex items-center gap-2 justify-start rounded-md px-3 py-2 text-sm font-medium text-zinc-900 outline-offset-2 transition active:transition-none bg-zinc-50 hover:bg-zinc-100 active:bg-zinc-100 active:text-zinc-900/60 group mt-6 pl-15 w-full">
       Read more on LinkedIn
       <svg viewBox="0 0 24 24" class="h-4 w-4 fill-zinc-400 transition group-active:fill-zinc-600">
         <path d="M18.335 18.339H15.67v-4.177c0-.996-.02-2.278-1.39-2.278-1.389 0-1.601 1.084-1.601 2.205v4.25h-2.666V9.75h2.56v1.17h.035c.358-.674 1.228-1.387 2.528-1.387 2.7 0 3.2 1.778 3.2 4.091v4.715ZM7.003 8.575a1.546 1.546 0 0 1-1.548-1.549 1.548 1.548 0 1 1 1.547 1.549Zm1.336 9.764H5.666V9.75H8.34v8.589ZM19.67 3H4.329C3.593 3 3 3.58 3 4.297v15.406C3 20.42 3.594 21 4.328 21h15.338C20.4 21 21 20.42 21 19.703V4.297C21 3.58 20.4 3 19.666 3h.003Z"/>

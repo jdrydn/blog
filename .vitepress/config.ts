@@ -12,20 +12,10 @@ export default defineConfig({
   ],
 
   cleanUrls: true,
+  srcExclude: ['README.md'],
+  lastUpdated: true,
 
   markdown: {
     theme: 'github-dark',
-  },
-
-  srcExclude: ['README.md'],
-
-  lastUpdated: true,
-
-  themeConfig: {
-    links: {
-      threads: 'https://www.threads.com/@jdrydn26',
-      linkedin: 'https://linkedin.com/in/jdrydn',
-      github: 'https://github.com/jdrydn',
-    },
   },
 });
