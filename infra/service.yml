@@ -5,7 +5,10 @@ Description: Hello world apps, as a Lambda Event Function & Lambda Web Functions
 Parameters:
   CodeBucket:
     Type: String
-    Description: The versioned S3 bucket from the bootstrap stack
+    Description: The versioned S3 bucket from the base stack
+  ExecutionRoleArn:
+    Type: String
+    Description: The functions' execution role from the base stack
   ExpressCodeVersion:
     Type: String
     Description: S3 object version of express/function.zip
@@ -28,6 +31,7 @@ Resources:
         - arm64
       CodeUri: ../apps/basic-event/dist
       Handler: handler.handler
+      Role: !Ref ExecutionRoleArn
       Timeout: 10
 
   ExpressWebFunction:
@@ -35,6 +39,7 @@ Resources:
     Properties:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
+      ExecutionRoleArn: !Ref ExecutionRoleArn
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: express/function.zip
@@ -46,6 +51,7 @@ Resources:
     Properties:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
+      ExecutionRoleArn: !Ref ExecutionRoleArn
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: hono/function.zip
@@ -57,6 +63,7 @@ Resources:
     Properties:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
+      ExecutionRoleArn: !Ref ExecutionRoleArn
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: nextjs/function.zip
@@ -68,6 +75,7 @@ Resources:
     Properties:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
+      ExecutionRoleArn: !Ref ExecutionRoleArn
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: vanilla/function.zip

@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Versioned S3 bucket that holds the Lambda deployment packages
+Description: Versioned S3 bucket that holds the Lambda deployment packages, & the functions' execution role
 
 Resources:
   CodeBucket:
@@ -42,6 +42,22 @@ Resources:
               ArnLike:
                 aws:SourceArn: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:web-function/*/revision/*
 
+  # Shared by every function, Event & Web alike
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
 Outputs:
   CodeBucketName:
     Value: !Ref CodeBucket
+  ExecutionRoleArn:
+    Value: !GetAtt ExecutionRole.Arn

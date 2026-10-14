@@ -1,17 +1,17 @@
 version = 0.1
 
-# sam deploy --config-env bootstrap
-# Creates the versioned S3 bucket that holds every deployment package
-[bootstrap.deploy.parameters]
-template_file = "infra/bootstrap.yml"
-stack_name = "lambda-web-function-poc-bootstrap"
+# sam deploy --config-env base
+# Creates the versioned S3 bucket that holds every deployment package, & the functions' execution role
+[base.deploy.parameters]
+template_file = "infra/base.yml"
+stack_name = "lambda-web-function-poc-base"
+capabilities = "CAPABILITY_IAM"
 no_fail_on_empty_changeset = true
 
 # sam deploy --s3-bucket <bucket> --parameter-overrides <versions>
-# See mise-tasks/deploy, which fills in the bucket & object versions
+# See mise-tasks/deploy, which fills in the bucket, role & object versions
 [default.deploy.parameters]
-template_file = "infra/infrastructure.yml"
+template_file = "infra/service.yml"
 stack_name = "lambda-web-function-poc"
 s3_prefix = "basic-event"
-capabilities = "CAPABILITY_IAM"
 no_fail_on_empty_changeset = true

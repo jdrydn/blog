@@ -5,11 +5,18 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-sam deploy --config-env bootstrap
-BUCKET=$(aws cloudformation describe-stacks \
-  --stack-name lambda-web-function-poc-bootstrap \
-  --query "Stacks[0].Outputs[?OutputKey=='CodeBucketName'].OutputValue" \
-  --output text)
+sam deploy --config-env base
+
+# Print an output of the base stack
+base_output() {
+  aws cloudformation describe-stacks \
+    --stack-name lambda-web-function-poc-base \
+    --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" \
+    --output text
+}
+
+BUCKET=$(base_output CodeBucketName)
+EXECUTION_ROLE_ARN=$(base_output ExecutionRoleArn)
 
 pnpm -r build
 pnpm -r --if-present package
@@ -28,6 +35,7 @@ sam deploy \
   --s3-bucket "$BUCKET" \
   --parameter-overrides \
     "CodeBucket=$BUCKET" \
+    "ExecutionRoleArn=$EXECUTION_ROLE_ARN" \
     "ExpressCodeVersion=$(upload express)" \
     "HonoCodeVersion=$(upload hono)" \
     "NextjsCodeVersion=$(upload nextjs)" \

@@ -50,16 +50,16 @@ $ mise run deploy
 
 This runs [`mise-tasks/deploy`](mise-tasks/deploy), which:
 
-1. Deploys [`infra/bootstrap.yml`](infra/bootstrap.yml) (stack `lambda-web-function-poc-bootstrap`), a versioned S3
-   bucket with a bucket policy that lets Lambda read deployment packages from it.
+1. Deploys [`infra/base.yml`](infra/base.yml) (stack `lambda-web-function-poc-base`), a versioned S3 bucket with a
+   bucket policy that lets Lambda read deployment packages from it, & an IAM execution role shared by every function.
 2. Builds every app (`pnpm -r build`) & zips each web app into `apps/<app>/function.zip` (`pnpm -r package`).
 3. Uploads each zip to `s3://<bucket>/<app>/function.zip`, capturing the new object version.
-4. Deploys [`infra/infrastructure.yml`](infra/infrastructure.yml) (stack `lambda-web-function-poc`) with those object
+4. Deploys [`infra/service.yml`](infra/service.yml) (stack `lambda-web-function-poc`) with the bucket, role & object
    versions. SAM packages `basic-event` itself, into the same bucket.
 
 The web app URLs are printed as stack outputs (`ExpressUrl`, `HonoUrl`, `NextjsUrl`, `VanillaUrl`).
 
-### Why a separate bootstrap stack?
+### Why a separate base stack?
 
 Web Functions can only load code from an object in a **versioned** S3 bucket, and `sam package` can't upload it for
 them. So the bucket has to exist (and the zips have to be uploaded) before the main stack can be deployed. See
@@ -87,7 +87,7 @@ them. So the bucket has to exist (and the zips have to be uploaded) before the m
 
 ```sh
 $ sam delete --stack-name lambda-web-function-poc
-$ sam delete --stack-name lambda-web-function-poc-bootstrap
+$ sam delete --stack-name lambda-web-function-poc-base
 ```
 
 The bucket is retained (`DeletionPolicy: Retain`), so empty it (every object version) & delete it manually.
@@ -102,14 +102,14 @@ apps/
   nextjs/           Web Function: Next.js
   vanilla/          Web Function: node:http
 infra/
-  bootstrap.yml     Versioned S3 bucket for deployment packages
-  infrastructure.yml  The functions (SAM)
+  base.yml          Versioned S3 bucket for deployment packages, & the execution role
+  service.yml       The functions (SAM)
 mise-tasks/
   deploy            mise run deploy
 public/
   logo.png          Shared static assets, symlinked into each app as `public/`
 mise.toml           Tool versions
-samconfig.toml      SAM config, `bootstrap` & `default` envs
+samconfig.toml      SAM config, `base` & `default` envs
 ```
 
 [web-functions]: https://docs.aws.amazon.com/lambda/latest/dg/web-functions.html
