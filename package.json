@@ -1,0 +1,13 @@
+{
+  "name": "jdrydn/blog-post-2026-10-aws-lambda-web-function-poc",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.27.0",
+  "author": "James <james@jdrydn.com> (https://jdrydn.com)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.164",
+    "tsup": "^9.0.0",
+    "typescript": "^7.0.2"
+  }
+}

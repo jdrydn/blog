@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#MISE description="Build, package & deploy every app"
+# Web Functions can only read code from a versioned S3 object (`sam package` can't upload it for them),
+# so upload each zip ourselves and pass the object versions into the stack.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+sam deploy --config-env bootstrap
+BUCKET=$(aws cloudformation describe-stacks \
+  --stack-name lambda-web-function-poc-bootstrap \
+  --query "Stacks[0].Outputs[?OutputKey=='CodeBucketName'].OutputValue" \
+  --output text)
+
+pnpm -r build
+pnpm -r --if-present package
+
+# Upload apps/<app>/function.zip to <app>/function.zip & print the new object version
+upload() {
+  aws s3api put-object \
+    --bucket "$BUCKET" \
+    --key "$1/function.zip" \
+    --body "apps/$1/function.zip" \
+    --query VersionId \
+    --output text
+}
+
+sam deploy \
+  --s3-bucket "$BUCKET" \
+  --parameter-overrides \
+    "CodeBucket=$BUCKET" \
+    "ExpressCodeVersion=$(upload express)" \
+    "HonoCodeVersion=$(upload hono)" \
+    "NextjsCodeVersion=$(upload nextjs)" \
+    "VanillaCodeVersion=$(upload vanilla)"

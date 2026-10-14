@@ -1,0 +1,22 @@
+{
+  "name": "jdrydn/blog-post-2026-10-aws-lambda-web-function-poc---hono",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.ts",
+    "build": "tsup",
+    "start": "node dist/index.js",
+    "package": "rm -f function.zip && zip -qr function.zip package.json dist public"
+  },
+  "packageManager": "pnpm@10.27.0",
+  "author": "James <james@jdrydn.com> (https://jdrydn.com)",
+  "license": "MIT",
+  "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "hono": "^4.13.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2"
+  }
+}

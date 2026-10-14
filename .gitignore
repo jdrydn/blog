@@ -6,3 +6,11 @@ node_modules/
 
 # Environment
 .env*.local
+
+# Build output
+dist/
+.next/
+next-env.d.ts
+function.zip
+.aws-sam/
+*.tsbuildinfo

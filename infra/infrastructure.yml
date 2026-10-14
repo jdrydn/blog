@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Hello world apps, as a Lambda Event Function & Lambda Web Functions
+
+Parameters:
+  CodeBucket:
+    Type: String
+    Description: The versioned S3 bucket from the bootstrap stack
+  ExpressCodeVersion:
+    Type: String
+    Description: S3 object version of express/function.zip
+  HonoCodeVersion:
+    Type: String
+    Description: S3 object version of hono/function.zip
+  NextjsCodeVersion:
+    Type: String
+    Description: S3 object version of nextjs/function.zip
+  VanillaCodeVersion:
+    Type: String
+    Description: S3 object version of vanilla/function.zip
+
+Resources:
+  BasicEventFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs24.x
+      Architectures:
+        - arm64
+      CodeUri: ../apps/basic-event/dist
+      Handler: handler.handler
+      Timeout: 10
+
+  ExpressWebFunction:
+    Type: AWS::Serverless::WebFunction
+    Properties:
+      Runtime: nodejs24.x
+      AuthType: ApplicationManaged
+      CodeUri:
+        Bucket: !Ref CodeBucket
+        Key: express/function.zip
+        Version: !Ref ExpressCodeVersion
+      EntryPoint: dist/index.js
+
+  HonoWebFunction:
+    Type: AWS::Serverless::WebFunction
+    Properties:
+      Runtime: nodejs24.x
+      AuthType: ApplicationManaged
+      CodeUri:
+        Bucket: !Ref CodeBucket
+        Key: hono/function.zip
+        Version: !Ref HonoCodeVersion
+      EntryPoint: dist/index.js
+
+  NextjsWebFunction:
+    Type: AWS::Serverless::WebFunction
+    Properties:
+      Runtime: nodejs24.x
+      AuthType: ApplicationManaged
+      CodeUri:
+        Bucket: !Ref CodeBucket
+        Key: nextjs/function.zip
+        Version: !Ref NextjsCodeVersion
+      EntryPoint: apps/nextjs/index.js
+
+  VanillaWebFunction:
+    Type: AWS::Serverless::WebFunction
+    Properties:
+      Runtime: nodejs24.x
+      AuthType: ApplicationManaged
+      CodeUri:
+        Bucket: !Ref CodeBucket
+        Key: vanilla/function.zip
+        Version: !Ref VanillaCodeVersion
+      EntryPoint: dist/index.js
+
+Outputs:
+  BasicEventFunctionName:
+    Value: !Ref BasicEventFunction
+  ExpressUrl:
+    Value: !Sub https://${ExpressWebFunctionEndpoint.DomainName}
+  HonoUrl:
+    Value: !Sub https://${HonoWebFunctionEndpoint.DomainName}
+  NextjsUrl:
+    Value: !Sub https://${NextjsWebFunctionEndpoint.DomainName}
+  VanillaUrl:
+    Value: !Sub https://${VanillaWebFunctionEndpoint.DomainName}

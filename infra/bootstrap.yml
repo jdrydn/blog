@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Versioned S3 bucket that holds the Lambda deployment packages
+
+Resources:
+  CodeBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      # Web Functions pin each revision to an object version, so versioning is required.
+      # Don't expire old versions either, a revision fails if its object version is deleted.
+      VersioningConfiguration:
+        Status: Enabled
+      # SSE-S3, because Web Functions don't support the AWS managed `aws/s3` KMS key
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  CodeBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref CodeBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          # Web Functions read their code from S3 as the Lambda service principal
+          - Sid: AllowLambdaWebFunctionCodeAccess
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action:
+              - s3:GetObject
+              - s3:GetObjectVersion
+            Resource: !Sub ${CodeBucket.Arn}/*
+            Condition:
+              ArnLike:
+                aws:SourceArn: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:web-function/*/revision/*
+
+Outputs:
+  CodeBucketName:
+    Value: !Ref CodeBucket
