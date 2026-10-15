@@ -29,10 +29,13 @@ Resources:
       Runtime: nodejs24.x
       Architectures:
         - arm64
-      CodeUri: ../apps/basic-event/dist
-      Handler: handler.handler
+      CodeUri: ../apps/basic-event/function.zip
+      Handler: dist/handler.handler
       Role: !Ref ExecutionRoleArn
       Timeout: 10
+      ReservedConcurrentExecutions: 1
+      FunctionUrlConfig:
+        AuthType: NONE
 
   ExpressWebFunction:
     Type: AWS::Serverless::WebFunction
@@ -40,6 +43,7 @@ Resources:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
       ExecutionRoleArn: !Ref ExecutionRoleArn
+      MaxConcurrencyPerEnvironment: 1
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: express/function.zip
@@ -52,6 +56,7 @@ Resources:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
       ExecutionRoleArn: !Ref ExecutionRoleArn
+      MaxConcurrencyPerEnvironment: 1
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: hono/function.zip
@@ -64,6 +69,7 @@ Resources:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
       ExecutionRoleArn: !Ref ExecutionRoleArn
+      MaxConcurrencyPerEnvironment: 1
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: nextjs/function.zip
@@ -76,6 +82,7 @@ Resources:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
       ExecutionRoleArn: !Ref ExecutionRoleArn
+      MaxConcurrencyPerEnvironment: 1
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: vanilla/function.zip
@@ -83,8 +90,8 @@ Resources:
       EntryPoint: dist/index.js
 
 Outputs:
-  BasicEventFunctionName:
-    Value: !Ref BasicEventFunction
+  BasicEventUrl:
+    Value: !GetAtt BasicEventFunctionUrl.FunctionUrl
   ExpressUrl:
     Value: !Sub https://${ExpressWebFunctionEndpoint.DomainName}
   HonoUrl:

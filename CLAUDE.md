@@ -10,8 +10,10 @@ Lambda Web Functions (`AWS::Serverless::WebFunction`), plus `basic-event`, a reg
 mise install                # Node.js 24, pnpm, AWS CLI, AWS SAM CLI
 pnpm install
 pnpm -r build               # Build every app
-pnpm -r --if-present package  # Zip every web app into apps/<app>/function.zip
+pnpm -r --if-present package  # Zip every app into apps/<app>/function.zip
 mise run deploy             # Deploy base stack, build, package, upload & deploy (real AWS resources)
+mise run test                # Artillery (test/runner.yml) against every URL output, results in test/artifacts/
+mise run test:report         # Summarise the results in test/artifacts/ again
 
 # Per app (apps/express, apps/hono, apps/vanilla, apps/nextjs)
 pnpm dev                    # Local dev server on localhost:3000
@@ -31,14 +33,15 @@ with no `node_modules`, with `AWS_LAMBDA_HTTP_ENDPOINT=127.0.0.1:<port>`, then `
 
 - **Never run `mise run deploy`, `sam deploy` or `sam delete` without asking.** They create or destroy real AWS
   resources.
-- **Keep the four web apps in step.** Every web app serves the same three routes (`/`, `/api` returning
-  `{ message, framework, time }`, `/logo.png`) with the same index page. A change to one usually belongs in all four.
+- **Keep all five apps in step.** Every app (including `basic-event`, through its Function URL) serves the same three
+  routes (`/`, `/api` returning `{ message, framework, time }`, `/logo.png`) with the same index page. A change to one
+  usually belongs in all five.
 - `sam validate --lint` fails with `E3006` for the `AWS::Lambda::WebFunction*` types, because cfn-lint doesn't know them
   yet. That's expected, plain `sam validate` is the check.
 
 ## Gotchas
 
-- **Listen address**: Web Functions set `AWS_LAMBDA_HTTP_ENDPOINT` (`host:port`), not `PORT`. Every app reads it,
+- **Listen address**: Web Functions set `AWS_LAMBDA_HTTP_ENDPOINT` (`host:port`), not `PORT`. Every web app reads it,
   defaulting to `localhost:3000`. Next.js reads `HOSTNAME` & `PORT`, so `apps/nextjs/lambda.js` maps them before
   requiring the standalone `server.js`.
 - **`public/`**: the shared assets live in the root `public/`, symlinked into each app as `apps/<app>/public`. Apps
@@ -54,15 +57,16 @@ with no `node_modules`, with `AWS_LAMBDA_HTTP_ENDPOINT=127.0.0.1:<port>`, then `
 - **IAM lives in the base stack**: one execution role (`AWSLambdaBasicExecutionRole`) is shared by every function,
   passed in as `ExecutionRoleArn`. Give it extra permissions in `infra/base.yml`, don't let SAM generate roles in
   `infra/service.yml` (that stack deploys without `CAPABILITY_IAM`).
-- **`CodeUri` paths are relative to the template**, so `infra/service.yml` uses `../apps/basic-event/dist`.
+- **`CodeUri` paths are relative to the template**, so `infra/service.yml` uses `../apps/basic-event/function.zip`.
 - **Adding a web app** means: an `apps/<app>` package with `build` & `package` scripts, a `public` symlink
   (`ln -s ../../public apps/<app>/public`), a `<App>CodeVersion` parameter, `AWS::Serverless::WebFunction` & URL output
-  in `infra/service.yml`, and an `upload` line in `mise-tasks/deploy`.
+  in `infra/service.yml`, an `upload` line in `mise-tasks/deploy`, and its `<App>Url` in the list in
+  `mise-tasks/test/_default`.
 
 ## Conventions
 
-- TypeScript on Node.js 24. Express, Hono & vanilla are ESM (`"type": "module"`) and run directly with Node.js type
-  stripping in dev (no `tsx`), so keep syntax erasable (`erasableSyntaxOnly`). `basic-event` builds to CommonJS.
+- TypeScript on Node.js 24. Every app except Next.js is ESM (`"type": "module"`). Express, Hono & vanilla run directly
+  with Node.js type stripping in dev (no `tsx`), so keep syntax erasable (`erasableSyntaxOnly`).
 - Prettier: single quotes, 120 columns, trailing commas. 2-space indent.
 - Prefer `undefined` over `null`.
 - One file per app where possible; the index page HTML is inlined in each app on purpose, so each is self-contained for

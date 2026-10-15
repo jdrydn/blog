@@ -6,7 +6,7 @@ version = 0.1
 template_file = "infra/base.yml"
 stack_name = "lambda-web-function-poc-base"
 capabilities = "CAPABILITY_IAM"
-no_fail_on_empty_changeset = true
+fail_on_empty_changeset = false
 
 # sam deploy --s3-bucket <bucket> --parameter-overrides <versions>
 # See mise-tasks/deploy, which fills in the bucket, role & object versions
@@ -14,4 +14,4 @@ no_fail_on_empty_changeset = true
 template_file = "infra/service.yml"
 stack_name = "lambda-web-function-poc"
 s3_prefix = "basic-event"
-no_fail_on_empty_changeset = true
+fail_on_empty_changeset = false

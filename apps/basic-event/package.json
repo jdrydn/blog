@@ -2,13 +2,16 @@
   "name": "jdrydn/blog-post-2026-10-aws-lambda-web-function-poc---basic-event",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "tsup src/handler.ts --format cjs --target node24 --clean"
+    "build": "tsup src/handler.ts --format esm --target node24 --clean",
+    "package": "rm -f function.zip && zip -qr function.zip package.json dist public"
   },
   "packageManager": "pnpm@10.27.0",
   "author": "James <james@jdrydn.com> (https://jdrydn.com)",
   "license": "MIT",
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.164",
     "@types/node": "^24.19.2"
   }
 }

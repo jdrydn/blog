@@ -1,0 +1,66 @@
+config:
+  http:
+    # Match the Web Function default timeout, a cold start can take a few seconds
+    timeout: 30
+  phases:
+    # A trickle of requests, so the first few land on cold execution environments
+    - name: cold-start
+      duration: 10
+      arrivalRate: 1
+    - name: ramp
+      duration: 60
+      arrivalRate: 1
+      rampTo: 20
+    - name: hold
+      duration: 60
+      arrivalRate: 20
+    # A sudden burst forces Lambda to scale out: an Event Function needs one environment per concurrent request,
+    # whereas a Web Function environment serves many concurrent requests
+    - name: spike
+      duration: 20
+      arrivalRate: 50
+    - name: cool-down
+      duration: 20
+      arrivalRate: 5
+  plugins:
+    # Fail requests that don't return the expected status code, counted in the summary rather than printed per request
+    expect:
+      outputFormat: silent
+      reportFailuresAsErrors: true
+    # Report response times per route, as `/logo.png` & `/` behave quite differently to `/api`
+    metrics-by-endpoint:
+      useOnlyRequestNames: true
+  ensure:
+    maxErrorRate: 1
+    thresholds:
+      # Generous enough to absorb cold starts, which land in the tail
+      - http.response_time.p95: 1000
+      - http.response_time.p99: 3000
+
+scenarios:
+  # A browser loading the index page, then the logo it references
+  - name: page-view
+    weight: 3
+    flow:
+      - get:
+          name: index
+          url: /
+          expect:
+            - statusCode: 200
+      - get:
+          name: logo
+          url: /logo.png
+          expect:
+            - statusCode: 200
+            - contentType: image/png
+  # A client calling the API
+  - name: api
+    weight: 2
+    flow:
+      - get:
+          name: api
+          url: /api
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: message

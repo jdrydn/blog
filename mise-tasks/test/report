@@ -1,0 +1,93 @@
+#!/usr/bin/env node
+//MISE description="Summarise the Artillery reports in test/artifacts"
+const fs = require('node:fs');
+const path = require('node:path');
+
+const ARTIFACTS = path.resolve(__dirname, '../../test/artifacts');
+const ROUTES = ['index', 'logo', 'api'];
+
+// Written by `mise run test`, one `<name>\t<url>\t<exit code>` line per target
+const targets = fs
+  .readFileSync(path.join(ARTIFACTS, 'targets.tsv'), 'utf8')
+  .trim()
+  .split('\n')
+  .map((line) => {
+    const [name, url, code] = line.split('\t');
+    const report = JSON.parse(fs.readFileSync(path.join(ARTIFACTS, `${name}.json`), 'utf8'));
+    return { name, url, passed: code === '0', ...report.aggregate };
+  });
+
+function table(head, rows) {
+  const widths = head.map((h, i) => Math.max(h.length, ...rows.map((row) => String(row[i]).length)));
+  const line = (cells) =>
+    cells
+      .map((cell, i) => String(cell).padEnd(widths[i]))
+      .join('  ')
+      .trimEnd();
+  console.log([line(head), line(widths.map((w) => '-'.repeat(w))), ...rows.map(line)].join('\n'));
+}
+
+// Matching counters, as `<suffix>: <count>`, e.g. `http.codes.` => { 200: 4500, 429: 20 }
+function countersWithPrefix(counters, prefix) {
+  return Object.fromEntries(
+    Object.entries(counters)
+      .filter(([key]) => key.startsWith(prefix))
+      .map(([key, count]) => [key.slice(prefix.length), count]),
+  );
+}
+
+const formatCounts = (counts) =>
+  Object.entries(counts)
+    .map(([key, count]) => `${key}x${count}`)
+    .join(' ') || '-';
+
+const formatTimes = (summary) => (summary ? `${summary.p50} / ${summary.p95} / ${summary.p99} / ${summary.max}` : '-');
+
+console.log('\nResults (response times in ms)\n');
+table(
+  ['Target', 'Result', 'Requests', 'Status codes', 'Errors', 'VUs failed', 'p50', 'p95', 'p99', 'Max'],
+  targets.map(({ name, passed, counters, summaries }) => {
+    const times = summaries['http.response_time'] ?? {};
+    const errors = Object.values(countersWithPrefix(counters, 'errors.')).reduce((sum, count) => sum + count, 0);
+    return [
+      name,
+      passed ? 'PASS' : 'FAIL',
+      counters['http.requests'] ?? 0,
+      formatCounts(countersWithPrefix(counters, 'http.codes.')),
+      errors,
+      counters['vusers.failed'] ?? 0,
+      times.p50 ?? '-',
+      times.p95 ?? '-',
+      times.p99 ?? '-',
+      times.max ?? '-',
+    ];
+  }),
+);
+
+console.log('\nResponse times by route (p50 / p95 / p99 / max, in ms)\n');
+table(
+  ['Target', ...ROUTES],
+  targets.map(({ name, summaries }) => [
+    name,
+    ...ROUTES.map((route) => formatTimes(summaries[`plugins.metrics-by-endpoint.response_time.${route}`])),
+  ]),
+);
+
+// Errors are rare, but the most useful thing to see when a target fails
+const errors = targets.flatMap(({ name, counters }) =>
+  Object.entries(countersWithPrefix(counters, 'errors.'))
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5)
+    .map(([error, count]) => [name, count, error]),
+);
+if (errors.length) {
+  console.log('\nTop errors\n');
+  table(['Target', 'Count', 'Error'], errors);
+}
+
+const failed = targets.filter(({ passed }) => !passed);
+console.log(`\nFull output for each target: ${path.relative(process.cwd(), ARTIFACTS)}/<Target>.log`);
+if (failed.length) {
+  console.log(`Failed: ${failed.map(({ name }) => name).join(', ')}`);
+  process.exit(1);
+}

@@ -6,6 +6,7 @@ node_modules/
 
 # Environment
 .env*.local
+.envrc
 
 # Build output
 dist/
@@ -14,3 +15,6 @@ next-env.d.ts
 function.zip
 .aws-sam/
 *.tsbuildinfo
+
+# Load test output
+test/artifacts/
