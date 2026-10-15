@@ -12,9 +12,21 @@ Parameters:
   ExpressCodeVersion:
     Type: String
     Description: S3 object version of express/function.zip
+  FastifyCodeVersion:
+    Type: String
+    Description: S3 object version of fastify/function.zip
+  H3CodeVersion:
+    Type: String
+    Description: S3 object version of h3/function.zip
   HonoCodeVersion:
     Type: String
     Description: S3 object version of hono/function.zip
+  KoaCodeVersion:
+    Type: String
+    Description: S3 object version of koa/function.zip
+  NestjsCodeVersion:
+    Type: String
+    Description: S3 object version of nestjs/function.zip
   NextjsCodeVersion:
     Type: String
     Description: S3 object version of nextjs/function.zip
@@ -50,6 +62,32 @@ Resources:
         Version: !Ref ExpressCodeVersion
       EntryPoint: dist/index.js
 
+  FastifyWebFunction:
+    Type: AWS::Serverless::WebFunction
+    Properties:
+      Runtime: nodejs24.x
+      AuthType: ApplicationManaged
+      ExecutionRoleArn: !Ref ExecutionRoleArn
+      MaxConcurrencyPerEnvironment: 1
+      CodeUri:
+        Bucket: !Ref CodeBucket
+        Key: fastify/function.zip
+        Version: !Ref FastifyCodeVersion
+      EntryPoint: dist/index.js
+
+  H3WebFunction:
+    Type: AWS::Serverless::WebFunction
+    Properties:
+      Runtime: nodejs24.x
+      AuthType: ApplicationManaged
+      ExecutionRoleArn: !Ref ExecutionRoleArn
+      MaxConcurrencyPerEnvironment: 1
+      CodeUri:
+        Bucket: !Ref CodeBucket
+        Key: h3/function.zip
+        Version: !Ref H3CodeVersion
+      EntryPoint: dist/index.js
+
   HonoWebFunction:
     Type: AWS::Serverless::WebFunction
     Properties:
@@ -61,6 +99,32 @@ Resources:
         Bucket: !Ref CodeBucket
         Key: hono/function.zip
         Version: !Ref HonoCodeVersion
+      EntryPoint: dist/index.js
+
+  KoaWebFunction:
+    Type: AWS::Serverless::WebFunction
+    Properties:
+      Runtime: nodejs24.x
+      AuthType: ApplicationManaged
+      ExecutionRoleArn: !Ref ExecutionRoleArn
+      MaxConcurrencyPerEnvironment: 1
+      CodeUri:
+        Bucket: !Ref CodeBucket
+        Key: koa/function.zip
+        Version: !Ref KoaCodeVersion
+      EntryPoint: dist/index.js
+
+  NestjsWebFunction:
+    Type: AWS::Serverless::WebFunction
+    Properties:
+      Runtime: nodejs24.x
+      AuthType: ApplicationManaged
+      ExecutionRoleArn: !Ref ExecutionRoleArn
+      MaxConcurrencyPerEnvironment: 1
+      CodeUri:
+        Bucket: !Ref CodeBucket
+        Key: nestjs/function.zip
+        Version: !Ref NestjsCodeVersion
       EntryPoint: dist/index.js
 
   NextjsWebFunction:
@@ -94,8 +158,16 @@ Outputs:
     Value: !GetAtt BasicEventFunctionUrl.FunctionUrl
   ExpressUrl:
     Value: !Sub https://${ExpressWebFunctionEndpoint.DomainName}
+  FastifyUrl:
+    Value: !Sub https://${FastifyWebFunctionEndpoint.DomainName}
+  H3Url:
+    Value: !Sub https://${H3WebFunctionEndpoint.DomainName}
   HonoUrl:
     Value: !Sub https://${HonoWebFunctionEndpoint.DomainName}
+  KoaUrl:
+    Value: !Sub https://${KoaWebFunctionEndpoint.DomainName}
+  NestjsUrl:
+    Value: !Sub https://${NestjsWebFunctionEndpoint.DomainName}
   NextjsUrl:
     Value: !Sub https://${NextjsWebFunctionEndpoint.DomainName}
   VanillaUrl:

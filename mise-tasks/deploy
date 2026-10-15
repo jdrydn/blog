@@ -37,6 +37,10 @@ sam deploy \
     "CodeBucket=$BUCKET" \
     "ExecutionRoleArn=$EXECUTION_ROLE_ARN" \
     "ExpressCodeVersion=$(upload express)" \
+    "FastifyCodeVersion=$(upload fastify)" \
+    "H3CodeVersion=$(upload h3)" \
     "HonoCodeVersion=$(upload hono)" \
+    "KoaCodeVersion=$(upload koa)" \
+    "NestjsCodeVersion=$(upload nestjs)" \
     "NextjsCodeVersion=$(upload nextjs)" \
     "VanillaCodeVersion=$(upload vanilla)"

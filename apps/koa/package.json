@@ -1,0 +1,24 @@
+{
+  "name": "jdrydn/blog-post-2026-10-aws-lambda-web-function-poc---koa",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.ts",
+    "build": "tsup",
+    "start": "node dist/index.js",
+    "package": "rm -f function.zip && zip -qr function.zip package.json dist public"
+  },
+  "packageManager": "pnpm@10.27.0",
+  "author": "James <james@jdrydn.com> (https://jdrydn.com)",
+  "license": "MIT",
+  "dependencies": {
+    "@koa/router": "^15.7.0",
+    "koa": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/koa": "^3.0.3",
+    "@types/koa__router": "^15.0.0",
+    "@types/node": "^24.19.2"
+  }
+}

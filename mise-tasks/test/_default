@@ -12,32 +12,55 @@ URLS=$(aws cloudformation describe-stacks \
   --query "Stacks[0].Outputs[?ends_with(OutputKey, 'Url')].[OutputKey, OutputValue]" \
   --output text)
 
-# Test the apps in a fixed order, rather than the order CloudFormation returns its outputs
-for name in BasicEventUrl VanillaUrl ExpressUrl HonoUrl NextjsUrl; do
+# Report the apps in a fixed order, rather than the order CloudFormation returns its outputs
+NAMES=(BasicEventUrl VanillaUrl ExpressUrl FastifyUrl KoaUrl HonoUrl H3Url NextjsUrl NestjsUrl)
+
+# Look up every URL before starting any tests, so a missing output fails fast
+TARGETS=()
+for name in "${NAMES[@]}"; do
   url=$(awk -F'\t' -v name="$name" '$1 == name { print $2 }' <<< "$URLS")
   if [ -z "$url" ]; then
     echo "No $name output on the service stack" >&2
     exit 1
   fi
+  TARGETS+=("$name"$'\t'"$url")
+done
 
-  echo "==> $name: $url"
-  started=$SECONDS
+# Load test one target, printing each phase as it starts (as progress) & its result, prefixed with its name
+run() {
+  local name=$1 url=$2 started=$SECONDS code result
+  local prefix
+  prefix=$(printf '%-14s' "$name")
   # Function URLs end with a `/`, so strip it before Artillery appends each request's path
-  # Keep the full output in the log, but show each phase as it starts, as progress
-  # Keep going if one fails its `ensure` checks, so every URL gets tested
   set +e
   pnpm exec artillery run test/runner.yml \
     --target "${url%/}" \
     --output "$ARTIFACTS/$name.json" \
     < /dev/null 2>&1 \
     | tee "$ARTIFACTS/$name.log" \
-    | awk '/^Phase started:/ { sub(/\)$/, "", $7); sub(/\(.*/, "", $8); print "    " $8 "  " $3 " (" $7 ")"; fflush() }'
+    | awk -v prefix="$prefix" '/^Phase started:/ {
+        sub(/\)$/, "", $7); sub(/\(.*/, "", $8); print prefix "  " $8 "  " $3 " (" $7 ")"; fflush()
+      }'
   code=${PIPESTATUS[0]}
   set -e
   if [ "$code" -eq 0 ]; then result=PASS; else result=FAIL; fi
-  echo "    $result in $((SECONDS - started))s"
-  # The JSON report has no target or result, so record them for test:report
-  printf '%s\t%s\t%s\n' "$name" "$url" "$code" >> "$ARTIFACTS/targets.tsv"
+  echo "$prefix  $result in $((SECONDS - started))s"
+  # The JSON report has no result, so record it for test:report
+  echo "$code" > "$ARTIFACTS/$name.exit"
+}
+
+# Test every target at once. Keep going if one fails its `ensure` checks, so every URL gets tested
+for target in "${TARGETS[@]}"; do
+  IFS=$'\t' read -r name url <<< "$target"
+  echo "==> $name: $url"
+  run "$name" "$url" &
+done
+wait
+
+# The JSON reports have no target or result, so record them, in order, for test:report
+for target in "${TARGETS[@]}"; do
+  IFS=$'\t' read -r name url <<< "$target"
+  printf '%s\t%s\t%s\n' "$name" "$url" "$(cat "$ARTIFACTS/$name.exit")" >> "$ARTIFACTS/targets.tsv"
 done
 
 mise run test:report

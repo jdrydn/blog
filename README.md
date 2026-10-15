@@ -1,8 +1,8 @@
 # AWS Lambda Web Functions POC
 
-A proof-of-concept for [AWS Lambda Web Functions][web-functions]: deploying the same "hello world" app, written in four
-different Node.js web frameworks, as Web Functions, alongside a regular Lambda (event) function behind a Function URL
-for comparison.
+A proof-of-concept for [AWS Lambda Web Functions][web-functions]: deploying the same "hello world" app, written in eight
+different ways (vanilla `node:http` & seven frameworks), as Web Functions, alongside a regular Lambda (event) function
+behind a Function URL for comparison.
 
 Every app serves:
 
@@ -14,7 +14,11 @@ Every app serves:
 | -------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------- |
 | [`apps/basic-event`](apps/basic-event) | None                                          | Lambda (event) function, `AWS::Serverless::Function`, with a Function URL |
 | [`apps/express`](apps/express)         | [Express](https://expressjs.com) 5            | Web Function, `AWS::Serverless::WebFunction`                              |
+| [`apps/fastify`](apps/fastify)         | [Fastify](https://fastify.dev) 5              | Web Function, `AWS::Serverless::WebFunction`                              |
+| [`apps/h3`](apps/h3)                   | [h3](https://h3.dev) 2                        | Web Function, `AWS::Serverless::WebFunction`                              |
 | [`apps/hono`](apps/hono)               | [Hono](https://hono.dev)                      | Web Function, `AWS::Serverless::WebFunction`                              |
+| [`apps/koa`](apps/koa)                 | [Koa](https://koajs.com) 3                    | Web Function, `AWS::Serverless::WebFunction`                              |
+| [`apps/nestjs`](apps/nestjs)           | [NestJS](https://nestjs.com) 12               | Web Function, `AWS::Serverless::WebFunction`                              |
 | [`apps/nextjs`](apps/nextjs)           | [Next.js](https://nextjs.org) 16 (App Router) | Web Function, `AWS::Serverless::WebFunction`                              |
 | [`apps/vanilla`](apps/vanilla)         | `node:http`                                   | Web Function, `AWS::Serverless::WebFunction`                              |
 
@@ -58,7 +62,8 @@ This runs [`mise-tasks/deploy`](mise-tasks/deploy), which:
 4. Deploys [`infra/service.yml`](infra/service.yml) (stack `lambda-web-function-poc`) with the bucket, role & object
    versions. SAM uploads `basic-event`'s zip itself, into the same bucket.
 
-Every URL is printed as a stack output (`BasicEventUrl`, `ExpressUrl`, `HonoUrl`, `NextjsUrl`, `VanillaUrl`).
+Every URL is printed as a stack output (`BasicEventUrl`, `ExpressUrl`, `FastifyUrl`, `H3Url`, `HonoUrl`, `KoaUrl`,
+`NestjsUrl`, `NextjsUrl`, `VanillaUrl`).
 
 ### Why a separate base stack?
 
@@ -68,8 +73,10 @@ them. So the bucket has to exist (and the zips have to be uploaded) before the m
 
 ### Packaging
 
-- **Express, Hono & vanilla** - `tsup` bundles each app, dependencies included, into `dist/index.js`, so the zip only
-  needs `package.json`, `dist/` & `public/`. The Web Function's `EntryPoint` is `dist/index.js`.
+- **Express, Fastify, h3, Hono, Koa, NestJS & vanilla** - `tsup` bundles each app, dependencies included, into
+  `dist/index.js`, so the zip only needs `package.json`, `dist/` & `public/`. The Web Function's `EntryPoint` is
+  `dist/index.js`. NestJS is built as a single file (no code splitting), with its optional packages (microservices,
+  websockets, validation) left out.
 - **Next.js** - built with `output: 'standalone'`. [`lambda.js`](apps/nextjs/lambda.js) is copied in as `index.js`, to
   map `AWS_LAMBDA_HTTP_ENDPOINT` onto the `HOSTNAME` & `PORT` that Next.js reads, before starting `server.js`. The
   `.next/static` & `public` folders are copied in too. The zip keeps symlinks (`zip -y`) because pnpm's standalone
@@ -100,9 +107,14 @@ $ mise run test
 Each target's JSON report & full console output is written to `test/artifacts/`, then summarised: status codes, errors &
 response times (overall & per route) for every target. Re-print the summary with `mise run test:report`.
 
+Every target is tested at once, so a run takes about 3 minutes. That puts every target's load on your machine & network
+at the same time, which can inflate response times: the spike alone is ~450 requests/second, many of them downloading
+the 161KB logo.
+
 #### Results
 
-From a run on `2026-10-15`, with every function limited to a concurrency of 1 (see [Notes](#notes)):
+From a run on `2026-10-15`, before Fastify, h3, Koa & NestJS were added, with every function limited to a concurrency of
+1 (see [Notes](#notes)):
 
 - **Every Web Function served every request.** All four returned 100% `200`s across ~4,700 requests each, including the
   50 requests/second spike. With `MaxConcurrencyPerEnvironment: 1`, Lambda scaled out to more environments instead of
@@ -155,7 +167,11 @@ The bucket is retained (`DeletionPolicy: Retain`), so empty it (every object ver
 apps/
   basic-event/      Lambda (event) function
   express/          Web Function: Express
+  fastify/          Web Function: Fastify
+  h3/               Web Function: h3
   hono/             Web Function: Hono
+  koa/              Web Function: Koa
+  nestjs/           Web Function: NestJS
   nextjs/           Web Function: Next.js
   vanilla/          Web Function: node:http
 infra/
