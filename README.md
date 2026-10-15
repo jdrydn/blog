@@ -107,49 +107,60 @@ $ mise run test
 Each target's JSON report & full console output is written to `test/artifacts/`, then summarised: status codes, errors &
 response times (overall & per route) for every target. Re-print the summary with `mise run test:report`.
 
-Every target is tested at once, so a run takes about 3 minutes. That puts every target's load on your machine & network
-at the same time, which can inflate response times: the spike alone is ~450 requests/second, many of them downloading
-the 161KB logo.
+Targets are tested one at a time, so they don't compete for your machine's CPU & network and skew each other's response
+times. Each takes about 3 minutes, so a full run takes about 27 minutes.
 
 #### Results
 
-From a run on `2026-10-15`, before Fastify, h3, Koa & NestJS were added, with every function limited to a concurrency of
-1 (see [Notes](#notes)):
+From a run on `2026-10-15`, testing one target at a time, with every function limited to a concurrency of 1 (see
+[Notes](#notes)):
 
-- **Every Web Function served every request.** All four returned 100% `200`s across ~4,700 requests each, including the
+- **Every Web Function served every request.** All eight returned 100% `200`s across ~4,700 requests each, including the
   50 requests/second spike. With `MaxConcurrencyPerEnvironment: 1`, Lambda scaled out to more environments instead of
   throttling.
-- **The Event Function was throttled hard.** With `ReservedConcurrentExecutions: 1`, 1,402 of its 4,045 requests (35%)
-  got a `429`. It also made fewer requests overall, because a virtual user stops at its first failed check.
-- **The framework made almost no difference to warm latency.** All four Web Functions had a p50 of 12-14ms & a p95 of
-  18-22ms. Express had the tightest tail (p99 27.9ms), vanilla the widest (p99 53ms).
-- **The Event Function was slower even when it succeeded.** Its p50 was 18ms against 12-14ms for the Web Functions, and
-  its p99 was ~150ms on every route. Its `/logo.png` was slowest (p50 30.3ms), as it returns the image as a base64 body
-  rather than streaming it.
-- **The slowest single requests were most likely cold starts.** Next.js had the highest max (797ms, on `/`), then
-  Express (499ms, on `/api`), BasicEvent (430ms), Hono (369ms) & vanilla (227ms). Each is a single request, so treat
-  them as indicative, not a benchmark.
+- **The Event Function was throttled.** With `ReservedConcurrentExecutions: 1`, 1,013 of its 4,181 requests (24%) got a
+  `429`. It also made fewer requests overall, because a virtual user stops at its first failed check.
+- **The framework made almost no difference to latency.** All eight Web Functions had a p50 of 12-14ms, a p95 of 20-23ms
+  & a p99 of 25-31ms. h3 had the tightest tail (p99 24.8ms) and Next.js the widest (p99 30.9ms), but the whole spread is
+  about 6ms.
+- **Scaling out didn't show up in the tail.** Even with one request per environment, the spike from 20 to 50 requests a
+  second didn't push any Web Function's p99 past 31ms. That fits Lambda starting environments ahead of demand, though
+  the test doesn't measure environment counts directly.
+- **The Event Function was slower.** Its p50 was 19.9ms against 12-14ms for the Web Functions, and its `/logo.png` was
+  slowest (p50 26.8ms), as it returns the image as a base64 body rather than streaming it.
+- **Every Web Function had a slow outlier on one route, most likely a cold start.** Next.js had the highest max (901ms,
+  on `/api`), then NestJS (573ms), h3 (469ms), Koa (432ms), Express (416ms), Fastify (382ms), vanilla (370ms) & Hono
+  (365ms). Each is a single request, so treat them as indicative, not a benchmark. The Event Function's max was only
+  69ms, likely because its one environment was already warm.
 
 ```
 Results (response times in ms)
 
-Target         Result  Requests  Status codes       Errors  VUs failed  p50   p95   p99    Max
--------------  ------  --------  -----------------  ------  ----------  ----  ----  -----  ---
-BasicEventUrl  FAIL    4045      200x2643 429x1402  1402    1402        18    43.4  149.9  430
-VanillaUrl     PASS    4688      200x4688           0       0           13.1  22    53     227
-ExpressUrl     PASS    4666      200x4666           0       0           12.1  18    27.9   499
-HonoUrl        PASS    4676      200x4676           0       0           13.1  19.9  34.8   369
-NextjsUrl      PASS    4717      200x4717           0       0           13.9  22    39.3   797
+Target         Result  Requests  Status codes       Errors  VUs failed  p50   p95   p99   Max
+-------------  ------  --------  -----------------  ------  ----------  ----  ----  ----  ---
+BasicEventUrl  FAIL    4181      200x3168 429x1013  1013    1013        19.9  37.7  46.1  69
+VanillaUrl     PASS    4706      200x4706           0       0           12.1  19.9  25.8  370
+ExpressUrl     PASS    4722      200x4722           0       0           13.1  22    29.1  416
+FastifyUrl     PASS    4712      200x4712           0       0           12.1  19.9  25.8  382
+KoaUrl         PASS    4676      200x4676           0       0           13.1  21.1  25.8  432
+HonoUrl        PASS    4697      200x4697           0       0           13.1  19.9  25.8  365
+H3Url          PASS    4754      200x4754           0       0           12.1  19.9  24.8  469
+NextjsUrl      PASS    4665      200x4665           0       0           13.9  22.9  30.9  901
+NestjsUrl      PASS    4706      200x4706           0       0           13.1  22.9  29.1  573
 
 Response times by route (p50 / p95 / p99 / max, in ms)
 
-Target         index                     logo                       api
--------------  ------------------------  -------------------------  ------------------------
-BasicEventUrl  19.1 / 32.8 / 144 / 157   30.3 / 59.7 / 149.9 / 307  19.1 / 39.3 / 153 / 430
-VanillaUrl     13.1 / 22.9 / 56.3 / 130  13.1 / 21.1 / 53 / 227     13.1 / 22 / 48.9 / 99
-ExpressUrl     12.1 / 19.1 / 30.3 / 52   12.1 / 16 / 24.8 / 63      12.1 / 18 / 30.3 / 499
-HonoUrl        13.1 / 21.1 / 36.2 / 369  13.1 / 18 / 30.9 / 104     13.1 / 21.1 / 34.8 / 114
-NextjsUrl      15 / 22.9 / 41.7 / 797    13.1 / 18 / 36.2 / 81      13.9 / 22.9 / 39.3 / 153
+Target         index                     logo                      api
+-------------  ------------------------  ------------------------  ------------------------
+BasicEventUrl  19.9 / 30.9 / 37.7 / 62   26.8 / 44.3 / 50.9 / 64   19.9 / 30.9 / 37.7 / 69
+VanillaUrl     12.1 / 19.9 / 24.8 / 370  13.1 / 19.9 / 24.8 / 45   12.1 / 21.1 / 25.8 / 31
+ExpressUrl     13.1 / 23.8 / 30.9 / 416  13.1 / 21.1 / 25.8 / 41   13.1 / 22 / 29.1 / 36
+FastifyUrl     12.1 / 21.1 / 24.8 / 44   12.1 / 19.9 / 23.8 / 32   12.1 / 21.1 / 27.9 / 382
+KoaUrl         13.1 / 21.1 / 24.8 / 36   13.1 / 19.9 / 24.8 / 37   13.1 / 22 / 25.8 / 432
+HonoUrl        12.1 / 19.9 / 25.8 / 365  13.1 / 19.1 / 23.8 / 38   13.1 / 21.1 / 27.9 / 38
+H3Url          12.1 / 19.9 / 25.8 / 469  12.1 / 19.1 / 23.8 / 32   12.1 / 19.9 / 24.8 / 35
+NextjsUrl      15 / 24.8 / 32.1 / 219    13.1 / 21.1 / 26.8 / 103  13.9 / 24.8 / 29.1 / 901
+NestjsUrl      13.1 / 22.9 / 30.9 / 573  13.1 / 22 / 27.9 / 37     13.1 / 22.9 / 27.9 / 43
 ```
 
 ### Tearing down
