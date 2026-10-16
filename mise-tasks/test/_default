@@ -13,7 +13,7 @@ URLS=$(aws cloudformation describe-stacks \
   --output text)
 
 # Test the apps in a fixed order, rather than the order CloudFormation returns its outputs
-NAMES=(BasicEventUrl VanillaUrl ExpressUrl FastifyUrl KoaUrl HonoUrl H3Url NextjsUrl NestjsUrl)
+NAMES=(BasicEventUrl MiddyUrl VanillaUrl ExpressUrl FastifyUrl KoaUrl HonoUrl H3Url NextjsUrl NestjsUrl)
 
 # Look up every URL before starting any tests, so a missing output fails fast
 TARGETS=()

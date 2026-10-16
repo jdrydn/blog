@@ -1,0 +1,21 @@
+{
+  "name": "jdrydn/blog-post-2026-10-aws-lambda-web-function-poc---middy",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "package": "rm -f function.zip && zip -qr function.zip package.json dist public"
+  },
+  "packageManager": "pnpm@10.27.0",
+  "author": "James <james@jdrydn.com> (https://jdrydn.com)",
+  "license": "MIT",
+  "dependencies": {
+    "@middy/core": "^7.9.2",
+    "@middy/http-router": "^7.9.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.164",
+    "@types/node": "^24.19.2"
+  }
+}

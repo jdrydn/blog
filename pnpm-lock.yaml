@@ -95,6 +95,22 @@ importers:
         specifier: ^24.19.2
         version: 24.19.2
 
+  apps/middy:
+    dependencies:
+      '@middy/core':
+        specifier: ^7.9.2
+        version: 7.9.2
+      '@middy/http-router':
+        specifier: ^7.9.2
+        version: 7.9.2
+    devDependencies:
+      '@types/aws-lambda':
+        specifier: ^8.10.164
+        version: 8.10.164
+      '@types/node':
+        specifier: ^24.19.2
+        version: 24.19.2
+
   apps/nestjs:
     dependencies:
       '@nestjs/common':
@@ -905,6 +921,23 @@ packages:
   '@lukeed/csprng@1.1.0':
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
+
+  '@middy/core@7.9.2':
+    resolution: {integrity: sha512-3VJ8m6KjGyMMHjgbmAxHai8f97VOU71XTyjFI+lnLqC0Dng+5zxXfuagFXUQTHRL2xj16p+mKmWtbTnxkwF5zw==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      '@aws/durable-execution-sdk-js': ^2.0.0
+    peerDependenciesMeta:
+      '@aws/durable-execution-sdk-js':
+        optional: true
+
+  '@middy/http-router@7.9.2':
+    resolution: {integrity: sha512-86YTYYfgjWHdK4SmzBjOsqCWW/bI9+wKOkQG4Yrh49U/XuoxHjCsxy5bnAYhnkRFTPs+Elw4CUGvyomeRCQnmg==}
+    engines: {node: '>=22'}
+
+  '@middy/util@7.9.2':
+    resolution: {integrity: sha512-H2NDN08V2LKk04mnEOH0PMuSTckKpbYXamL2BsGP/QigQx0uXKaVISVK9/DLLEp3VxJofBTTBXK1QT0lypm8gg==}
+    engines: {node: '>=22'}
 
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     resolution: {integrity: sha512-oTXEIha4SsuXdTA4Iyskj0kpdx2yVXdhd75c2v3xGrHFfVMsbhTPZU/nMPL4sWKo4pBHm3aucLaqGlF696dTyQ==}
@@ -4401,6 +4434,16 @@ snapshots:
       - supports-color
 
   '@lukeed/csprng@1.1.0': {}
+
+  '@middy/core@7.9.2':
+    dependencies:
+      '@middy/util': 7.9.2
+
+  '@middy/http-router@7.9.2':
+    dependencies:
+      '@middy/util': 7.9.2
+
+  '@middy/util@7.9.2': {}
 
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     optional: true

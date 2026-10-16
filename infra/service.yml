@@ -53,6 +53,21 @@ Resources:
       FunctionUrlConfig:
         AuthType: NONE
 
+  MiddyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs24.x
+      Architectures:
+        - arm64
+      CodeUri: ../apps/middy/function.zip
+      Handler: dist/handler.handler
+      Role: !Ref ExecutionRoleArn
+      Timeout: 10
+      MemorySize: 3008
+      ReservedConcurrentExecutions: 4
+      FunctionUrlConfig:
+        AuthType: NONE
+
   ExpressWebFunction:
     Type: AWS::Serverless::WebFunction
     Properties:
@@ -186,6 +201,8 @@ Outputs:
     Value: !Sub https://${HonoWebFunctionEndpoint.DomainName}
   KoaUrl:
     Value: !Sub https://${KoaWebFunctionEndpoint.DomainName}
+  MiddyUrl:
+    Value: !GetAtt MiddyFunctionUrl.FunctionUrl
   NestjsUrl:
     Value: !Sub https://${NestjsWebFunctionEndpoint.DomainName}
   NextjsUrl:

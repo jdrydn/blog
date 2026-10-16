@@ -13,5 +13,5 @@ fail_on_empty_changeset = false
 [default.deploy.parameters]
 template_file = "infra/service.yml"
 stack_name = "lambda-web-function-poc"
-s3_prefix = "basic-event"
+s3_prefix = "event-functions"
 fail_on_empty_changeset = false
