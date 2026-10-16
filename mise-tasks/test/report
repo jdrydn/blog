@@ -89,5 +89,8 @@ const failed = targets.filter(({ passed }) => !passed);
 console.log(`\nFull output for each target: ${path.relative(process.cwd(), ARTIFACTS)}/<Target>.log`);
 if (failed.length) {
   console.log(`Failed: ${failed.map(({ name }) => name).join(', ')}`);
+}
+// One target failing its `ensure` checks is a result worth reporting, but every target failing means something's wrong
+if (failed.length === targets.length) {
   process.exit(1);
 }

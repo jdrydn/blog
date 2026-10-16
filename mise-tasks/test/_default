@@ -26,21 +26,27 @@ for name in "${NAMES[@]}"; do
   TARGETS+=("$name"$'\t'"$url")
 done
 
-# Test one target at a time, so they don't compete for this machine's CPU & network, and skew each other's results.
+# Test one target at a time, so they don't skew each other's results.
 # Keep going if one fails its `ensure` checks, so every URL gets tested
 for target in "${TARGETS[@]}"; do
   IFS=$'\t' read -r name url <<< "$target"
   echo "==> $name: $url"
   started=$SECONDS
   # Function URLs end with a `/`, so strip it before Artillery appends each request's path
-  # Keep the full output in the log, but show each phase as it starts, as progress
+  # Keep the full output in the log, but show Artillery setting up its Lambda function (which takes a while) & each phase
+  # as it starts, as progress
   set +e
-  pnpm exec artillery run test/runner.yml \
+  # Run Artillery from Lambda in us-east-1, rather than this machine, so its CPU & network aren't the bottleneck
+  pnpm exec artillery run-lambda test/runner.yml \
+    --region us-east-1 \
     --target "${url%/}" \
     --output "$ARTIFACTS/$name.json" \
     < /dev/null 2>&1 \
     | tee "$ARTIFACTS/$name.log" \
-    | awk '/^Phase started:/ { sub(/\)$/, "", $7); sub(/\(.*/, "", $8); print "    " $8 "  " $3 " (" $7 ")"; fflush() }'
+    | awk '
+      /Preparing AWS Lambda function/ { print "    Preparing AWS Lambda function..."; fflush() }
+      /^Phase started:/ { sub(/\)$/, "", $7); sub(/\(.*/, "", $8); print "    " $8 "  " $3 " (" $7 ")"; fflush() }
+    '
   code=${PIPESTATUS[0]}
   set -e
   if [ "$code" -eq 0 ]; then result=PASS; else result=FAIL; fi

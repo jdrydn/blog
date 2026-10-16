@@ -88,9 +88,12 @@ them. So the bucket has to exist (and the zips have to be uploaded) before the m
 
 - Every URL is **public**: the Web Function endpoints use `AuthType: ApplicationManaged` & the `basic-event` Function
   URL uses `AuthType: NONE`.
-- Every function is limited to a concurrency of 1. `basic-event` has `ReservedConcurrentExecutions: 1`, so one request
-  at a time in total. The Web Functions have `MaxConcurrencyPerEnvironment: 1`, so one request at a time per environment
-  (`maxEnvironments` can't go below 2, so they still scale out across environments).
+- Every function is capped at 4 requests at a time, on (about) 2 Arm vCPUs per environment, so the models compare
+  evenly. The Web Functions have `ScalingConfig.MaxEnvironments: 2` (the minimum) & `MaxConcurrencyPerEnvironment: 2`,
+  so 2 environments x 2 requests. `basic-event` handles one request per environment, so it has
+  `ReservedConcurrentExecutions: 4`, and `MemorySize: 3008`, the most a new account allows. That gives it 2 vCPUs, but
+  only about 1.7 vCPUs of compute (Lambda allocates 1 vCPU of compute per 1,769 MB), so it's slightly behind the Web
+  Functions. Matching them exactly needs `MemorySize: 3538`, after a quota increase from AWS Support.
 - Every deploy uploads new object versions, so every deploy creates a new revision of each Web Function.
 - Don't expire or delete old object versions in the bucket: a revision permanently fails if its object version is
   deleted.
@@ -107,60 +110,68 @@ $ mise run test
 Each target's JSON report & full console output is written to `test/artifacts/`, then summarised: status codes, errors &
 response times (overall & per route) for every target. Re-print the summary with `mise run test:report`.
 
-Targets are tested one at a time, so they don't compete for your machine's CPU & network and skew each other's response
-times. Each takes about 3 minutes, so a full run takes about 27 minutes.
+Artillery runs from AWS Lambda in `us-east-1` (`artillery run-lambda`), not your machine, so your CPU & network aren't
+the bottleneck. It creates a temporary Lambda function & SQS queue in your account for each run. Targets are tested one
+at a time, so they don't skew each other's response times. Each takes about 3 minutes, so a full run takes about 27
+minutes.
 
 #### Results
 
-From a run on `2026-10-15`, testing one target at a time, with every function limited to a concurrency of 1 (see
-[Notes](#notes)):
+From a run on `2026-10-16`, testing one target at a time from Artillery on Lambda in `us-east-1`, with every function
+capped at 4 requests at a time on (about) 2 vCPUs per environment (see [Notes](#notes)):
 
-- **Every Web Function served every request.** All eight returned 100% `200`s across ~4,700 requests each, including the
-  50 requests/second spike. With `MaxConcurrencyPerEnvironment: 1`, Lambda scaled out to more environments instead of
-  throttling.
-- **The Event Function was throttled.** With `ReservedConcurrentExecutions: 1`, 1,013 of its 4,181 requests (24%) got a
-  `429`. It also made fewer requests overall, because a virtual user stops at its first failed check.
-- **The framework made almost no difference to latency.** All eight Web Functions had a p50 of 12-14ms, a p95 of 20-23ms
-  & a p99 of 25-31ms. h3 had the tightest tail (p99 24.8ms) and Next.js the widest (p99 30.9ms), but the whole spread is
-  about 6ms.
-- **Scaling out didn't show up in the tail.** Even with one request per environment, the spike from 20 to 50 requests a
-  second didn't push any Web Function's p99 past 31ms. That fits Lambda starting environments ahead of demand, though
-  the test doesn't measure environment counts directly.
-- **The Event Function was slower.** Its p50 was 19.9ms against 12-14ms for the Web Functions, and its `/logo.png` was
-  slowest (p50 26.8ms), as it returns the image as a base64 body rather than streaming it.
-- **Every Web Function had a slow outlier on one route, most likely a cold start.** Next.js had the highest max (901ms,
-  on `/api`), then NestJS (573ms), h3 (469ms), Koa (432ms), Express (416ms), Fastify (382ms), vanilla (370ms) & Hono
-  (365ms). Each is a single request, so treat them as indicative, not a benchmark. The Event Function's max was only
-  69ms, likely because its one environment was already warm.
+- **Network distance dominates every number.** Every Web Function had a p50 of 80.6ms, so most of each response time is
+  the round trip from Artillery in `us-east-1` to the functions, not the functions themselves. Artillery rounds response
+  times into buckets (80.6, 82.3, 83.9, 85.6...), so differences under about 2ms don't show up at all.
+- **The framework made almost no difference to latency.** All eight Web Functions had a p50 of 80.6ms, a p95 of
+  83.9-85.6ms & a p99 of 89.1-94.6ms. Next.js was the only one consistently a bucket behind (p50 82.3ms on `/` &
+  `/api`, & the widest p99 at 94.6ms). The whole spread is about 5ms.
+- **Every Web Function served every request, & the Event Function very nearly did.** The Web Functions returned 100%
+  `200`s across ~4,700 requests each. The Event Function got 2 `429`s out of 4,707 requests, so its
+  `ReservedConcurrentExecutions: 4` was briefly hit, most likely while new environments were cold starting, when each
+  request holds an environment for longer.
+- **The Event Function was still slower, even with matching compute.** Its p50 was 89.1ms against 80.6ms, a gap of about
+  8ms, much the same as the previous run's 6-8ms on 128 MB. So the extra memory didn't close it: it's more likely the
+  Function URL & event invocation path than CPU. Its `/logo.png` was again the slowest (p50 92.8ms, p99 165.7ms), as it
+  returns the image as a base64 body rather than streaming it.
+- **Most targets had a slow outlier, most likely a cold start.** Next.js had the highest max (949ms, on `/`), then
+  Express (554ms), Fastify (516ms), Hono (485ms), vanilla (479ms), h3 (472ms), Koa (451ms) & the Event Function
+  (359ms). NestJS's max was only 116ms, so no request in the test hit one of its cold starts. Each is a single request,
+  so treat them as indicative, not a benchmark.
+
+The previous run (`2026-10-15`), from a laptop, with `basic-event` on 128 MB & `ReservedConcurrentExecutions: 1`, and
+the Web Functions on `MaxConcurrencyPerEnvironment: 1` with no limit on environments, had the same shape: the Web
+Functions all within ~6ms of each other (p50 12-14ms), & the Event Function slower (p50 19.9ms) and throttled (24% of
+requests got a `429`).
 
 ```
 Results (response times in ms)
 
-Target         Result  Requests  Status codes       Errors  VUs failed  p50   p95   p99   Max
--------------  ------  --------  -----------------  ------  ----------  ----  ----  ----  ---
-BasicEventUrl  FAIL    4181      200x3168 429x1013  1013    1013        19.9  37.7  46.1  69
-VanillaUrl     PASS    4706      200x4706           0       0           12.1  19.9  25.8  370
-ExpressUrl     PASS    4722      200x4722           0       0           13.1  22    29.1  416
-FastifyUrl     PASS    4712      200x4712           0       0           12.1  19.9  25.8  382
-KoaUrl         PASS    4676      200x4676           0       0           13.1  21.1  25.8  432
-HonoUrl        PASS    4697      200x4697           0       0           13.1  19.9  25.8  365
-H3Url          PASS    4754      200x4754           0       0           12.1  19.9  24.8  469
-NextjsUrl      PASS    4665      200x4665           0       0           13.9  22.9  30.9  901
-NestjsUrl      PASS    4706      200x4706           0       0           13.1  22.9  29.1  573
+Target         Result  Requests  Status codes    Errors  VUs failed  p50   p95   p99    Max
+-------------  ------  --------  --------------  ------  ----------  ----  ----  -----  ---
+BasicEventUrl  FAIL    4707      200x4705 429x2  2       2           89.1  96.6  106.7  359
+VanillaUrl     PASS    4689      200x4689        0       0           80.6  85.6  90.9   479
+ExpressUrl     PASS    4663      200x4663        0       0           80.6  85.6  90.9   554
+FastifyUrl     PASS    4691      200x4691        0       0           80.6  85.6  89.1   516
+KoaUrl         PASS    4726      200x4726        0       0           80.6  85.6  90.9   451
+HonoUrl        PASS    4717      200x4717        0       0           80.6  85.6  90.9   485
+H3Url          PASS    4677      200x4677        0       0           80.6  85.6  90.9   472
+NextjsUrl      PASS    4680      200x4680        0       0           80.6  85.6  94.6   949
+NestjsUrl      PASS    4741      200x4741        0       0           80.6  83.9  89.1   116
 
 Response times by route (p50 / p95 / p99 / max, in ms)
 
-Target         index                     logo                      api
--------------  ------------------------  ------------------------  ------------------------
-BasicEventUrl  19.9 / 30.9 / 37.7 / 62   26.8 / 44.3 / 50.9 / 64   19.9 / 30.9 / 37.7 / 69
-VanillaUrl     12.1 / 19.9 / 24.8 / 370  13.1 / 19.9 / 24.8 / 45   12.1 / 21.1 / 25.8 / 31
-ExpressUrl     13.1 / 23.8 / 30.9 / 416  13.1 / 21.1 / 25.8 / 41   13.1 / 22 / 29.1 / 36
-FastifyUrl     12.1 / 21.1 / 24.8 / 44   12.1 / 19.9 / 23.8 / 32   12.1 / 21.1 / 27.9 / 382
-KoaUrl         13.1 / 21.1 / 24.8 / 36   13.1 / 19.9 / 24.8 / 37   13.1 / 22 / 25.8 / 432
-HonoUrl        12.1 / 19.9 / 25.8 / 365  13.1 / 19.1 / 23.8 / 38   13.1 / 21.1 / 27.9 / 38
-H3Url          12.1 / 19.9 / 25.8 / 469  12.1 / 19.1 / 23.8 / 32   12.1 / 19.9 / 24.8 / 35
-NextjsUrl      15 / 24.8 / 32.1 / 219    13.1 / 21.1 / 26.8 / 103  13.9 / 24.8 / 29.1 / 901
-NestjsUrl      13.1 / 22.9 / 30.9 / 573  13.1 / 22 / 27.9 / 37     13.1 / 22.9 / 27.9 / 43
+Target         index                      logo                        api
+-------------  -------------------------  --------------------------  -------------------------
+BasicEventUrl  87.4 / 94.6 / 102.5 / 359  92.8 / 100.5 / 165.7 / 179  87.4 / 92.8 / 100.5 / 120
+VanillaUrl     80.6 / 85.6 / 92.8 / 479   80.6 / 82.3 / 87.4 / 118    80.6 / 85.6 / 94.6 / 106
+ExpressUrl     80.6 / 85.6 / 90.9 / 554   80.6 / 83.9 / 87.4 / 107    80.6 / 85.6 / 92.8 / 101
+FastifyUrl     80.6 / 85.6 / 90.9 / 311   80.6 / 82.3 / 89.1 / 125    80.6 / 85.6 / 89.1 / 516
+KoaUrl         80.6 / 85.6 / 96.6 / 109   80.6 / 82.3 / 87.4 / 108    80.6 / 85.6 / 89.1 / 451
+HonoUrl        80.6 / 85.6 / 92.8 / 485   80.6 / 82.3 / 87.4 / 101    80.6 / 85.6 / 92.8 / 114
+H3Url          80.6 / 85.6 / 90.9 / 472   80.6 / 83.9 / 89.1 / 113    80.6 / 85.6 / 90.9 / 127
+NextjsUrl      82.3 / 87.4 / 94.6 / 949   80.6 / 83.9 / 89.1 / 106    82.3 / 87.4 / 94.6 / 180
+NestjsUrl      80.6 / 85.6 / 92.8 / 116   80.6 / 82.3 / 87.4 / 114    80.6 / 85.6 / 89.1 / 113
 ```
 
 ### Tearing down
