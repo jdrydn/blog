@@ -48,7 +48,8 @@ $ AWS_LAMBDA_HTTP_ENDPOINT=localhost:4000 pnpm dev
 
 ## Deploying
 
-Make sure your AWS credentials & region are set (e.g. `AWS_PROFILE` & `AWS_REGION`), then:
+Make sure your AWS credentials are set (e.g. `AWS_PROFILE`), then deploy. Everything deploys to & tests from
+`us-east-1`, set in [`samconfig.toml`](samconfig.toml) & the `mise-tasks/` scripts:
 
 ```sh
 $ mise run deploy
@@ -63,14 +64,40 @@ This runs [`mise-tasks/deploy`](mise-tasks/deploy), which:
 4. Deploys [`infra/service.yml`](infra/service.yml) (stack `lambda-web-function-poc`) with the bucket, role & object
    versions. SAM uploads `basic-event`'s & `middy`'s zips itself, into the same bucket.
 
-Every URL is printed as a stack output (`BasicEventUrl`, `ExpressUrl`, `FastifyUrl`, `H3Url`, `HonoUrl`, `KoaUrl`,
-`MiddyUrl`, `NestjsUrl`, `NextjsUrl`, `VanillaUrl`).
+Every URL is printed as a stack output:
+
+| Output          | App                                    | Type & Example                                               |
+| --------------- | -------------------------------------- | ------------------------------------------------------------ |
+| `BasicEventUrl` | [`apps/basic-event`](apps/basic-event) | Event Function URL (`https://$ID.lambda-url.$REGION.on.aws`) |
+| `ExpressUrl`    | [`apps/express`](apps/express)         | Web Function URL (`https://$ID.lambda-web.$REGION.on.aws`)   |
+| `FastifyUrl`    | [`apps/fastify`](apps/fastify)         | Web Function URL (`https://$ID.lambda-web.$REGION.on.aws`)   |
+| `H3Url`         | [`apps/h3`](apps/h3)                   | Web Function URL (`https://$ID.lambda-web.$REGION.on.aws`)   |
+| `HonoUrl`       | [`apps/hono`](apps/hono)               | Web Function URL (`https://$ID.lambda-web.$REGION.on.aws`)   |
+| `KoaUrl`        | [`apps/koa`](apps/koa)                 | Web Function URL (`https://$ID.lambda-web.$REGION.on.aws`)   |
+| `MiddyUrl`      | [`apps/middy`](apps/middy)             | Event Function URL (`https://$ID.lambda-url.$REGION.on.aws`) |
+| `NestjsUrl`     | [`apps/nestjs`](apps/nestjs)           | Web Function URL (`https://$ID.lambda-web.$REGION.on.aws`)   |
+| `NextjsUrl`     | [`apps/nextjs`](apps/nextjs)           | Web Function URL (`https://$ID.lambda-web.$REGION.on.aws`)   |
+| `VanillaUrl`    | [`apps/vanilla`](apps/vanilla)         | Web Function URL (`https://$ID.lambda-web.$REGION.on.aws`)   |
 
 ### Why a separate base stack?
 
-Web Functions can only load code from an object in a **versioned** S3 bucket, and `sam package` can't upload it for
-them. So the bucket has to exist (and the zips have to be uploaded) before the main stack can be deployed. See
+Web Functions can only load code from an object in a **versioned** S3 bucket, and `sam package` can't upload it for them
+(yet!). So the bucket has to exist (and the zips have to be uploaded) before the main stack can be deployed. See
 [Deploying Web Function code from Amazon S3][web-functions-s3].
+
+### Why CloudFormation & SAM?
+
+As of `2026-10-16`, only AWS's own infrastructure-as-code tools support Web Functions:
+
+| Tool                 | Supports Web Functions?                                                                                                                                   |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CloudFormation       | Yes (`AWS::Lambda::WebFunction` [docs](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-lambda-webfunction.html))      |
+| AWS SAM              | Yes (`AWS::Serverless::WebFunction` [docs](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-webfunction.html)) |
+| AWS CDK              | Not yet, see [aws/aws-cdk#39234](https://github.com/aws/aws-cdk/issues/39234)                                                                             |
+| SST                  | Not yet, see [sst-community/sst#103](https://github.com/sst-community/sst/pull/103)                                                                       |
+| Terraform            | Not yet, see [hashicorp/terraform-provider-aws#50429](https://github.com/hashicorp/terraform-provider-aws/issues/50429)                                   |
+| Pulumi               | No                                                                                                                                                        |
+| Serverless Framework | No                                                                                                                                                        |
 
 ### Packaging
 
@@ -91,12 +118,11 @@ them. So the bucket has to exist (and the zips have to be uploaded) before the m
 
 - Every URL is **public**: the Web Function endpoints use `AuthType: ApplicationManaged` & the `basic-event` & `middy`
   Function URLs use `AuthType: NONE`.
-- Every function is capped at 4 requests at a time, on (about) 2 Arm vCPUs per environment, so the models compare
-  evenly. The Web Functions have `ScalingConfig.MaxEnvironments: 2` (the minimum) & `MaxConcurrencyPerEnvironment: 2`,
-  so 2 environments x 2 requests. The Event Functions (`basic-event` & `middy`) handle one request per environment, so
-  they have `ReservedConcurrentExecutions: 4`, and `MemorySize: 3008`, the most a new account allows. That gives them 2
-  vCPUs, but only about 1.7 vCPUs of compute (Lambda allocates 1 vCPU of compute per 1,769 MB), so they're slightly
-  behind the Web Functions. Matching them exactly needs `MemorySize: 3538`, after a quota increase from AWS Support.
+- Every function runs on (about) 2 Arm vCPUs per environment, so their performance compares evenly, & scales with
+  Lambda's defaults (no concurrency limits). The Event Functions (`basic-event` & `middy`) have `MemorySize: 3008`, the
+  most a new account allows. That gives them 2 vCPUs, but only about 1.7 vCPUs of compute (Lambda allocates 1 vCPU of
+  compute per 1,769 MB), so they're slightly behind the Web Functions. Matching them exactly needs `MemorySize: 3538`,
+  after a quota increase from AWS Support.
 - Every deploy uploads new object versions, so every deploy creates a new revision of each Web Function.
 - Don't expire or delete old object versions in the bucket: a revision permanently fails if its object version is
   deleted.
@@ -120,69 +146,74 @@ minutes.
 
 #### Results
 
-From a run on `2026-10-16`, testing one target at a time from Artillery on Lambda in `us-east-1`, with every function
-capped at 4 requests at a time on (about) 2 vCPUs per environment (see [Notes](#notes)):
+From the latest run on `2026-10-16`, testing one target at a time from Artillery on Lambda in `us-east-1`, the same
+region as the functions, with every function on (about) 2 vCPUs per environment & no concurrency limits (see
+[Notes](#notes)):
 
-- **Network distance dominates every number.** Every Web Function had a p50 of 80.6ms, so most of each response time is
-  the round trip from Artillery in `us-east-1` to the functions, not the functions themselves. Artillery rounds response
-  times into buckets (80.6, 82.3, 83.9, 85.6...), so differences under about 2ms don't show up at all.
-- **The framework made almost no difference to latency.** All eight Web Functions had a p50 of 80.6ms, a p95 of
-  83.9-85.6ms & a p99 of 89.1-94.6ms. Next.js was the only one consistently a bucket behind (p50 82.3ms on `/` & `/api`,
-  & the widest p99 at 94.6ms). The whole spread is about 5ms.
-- **Every Web Function served every request, & the Event Function very nearly did.** The Web Functions returned 100%
-  `200`s across ~4,700 requests each. The Event Function got 2 `429`s out of 4,707 requests, so its
-  `ReservedConcurrentExecutions: 4` was briefly hit, most likely while new environments were cold starting, when each
-  request holds an environment for longer.
-- **The Event Function was still slower, even with matching compute.** Its p50 was 89.1ms against 80.6ms, a gap of about
-  8ms, much the same as the previous run's 6-8ms on 128 MB. So the extra memory didn't close it: it's more likely the
-  Function URL & event invocation path than CPU. Its `/logo.png` was again the slowest (p50 92.8ms, p99 165.7ms), as it
-  returns the image as a base64 body rather than streaming it.
-- **Most targets had a slow outlier, most likely a cold start.** Next.js had the highest max (949ms, on `/`), then
-  Express (554ms), Fastify (516ms), Hono (485ms), vanilla (479ms), h3 (472ms), Koa (451ms) & the Event Function (359ms).
-  NestJS's max was only 116ms, so no request in the test hit one of its cold starts. Each is a single request, so treat
-  them as indicative, not a benchmark.
-
-The previous run (`2026-10-15`), from a laptop, with `basic-event` on 128 MB & `ReservedConcurrentExecutions: 1`, and
-the Web Functions on `MaxConcurrencyPerEnvironment: 1` with no limit on environments, had the same shape: the Web
-Functions all within ~6ms of each other (p50 12-14ms), & the Event Function slower (p50 19.9ms) and throttled (24% of
-requests got a `429`).
+- **Testing from the same region took the network out of the numbers.** Every p50 dropped by about 75ms against the
+  previous runs, which were tested from `us-east-1` against functions in another region. What's left is the functions
+  themselves, plus a few ms of in-region network.
+- **The Web Functions were 2-3x faster than the Event Functions.** Every Web Function had a p50 of 5-6ms, against
+  13.9ms for both Event Functions. Their p95s were 15-18ms against 22.9-23.8ms, and their p99s 19.9-29.1ms against
+  30.3ms. The gap of about 8ms is much the same as in every previous run, so it doesn't come from CPU, framework or
+  network: it's most likely the Function URL & event invocation path, which Web Functions skip.
+- **Static files showed the biggest gap.** `/logo.png` was the Web Functions' fastest route (p50 4-5ms, p99 7.9-10.1ms),
+  as they stream the file from disk. It was the Event Functions' slowest (p50 16.9ms, p99 32.8-34.1ms), as they return
+  it as a base64 body inside a JSON response.
+- **The framework made almost no difference to latency.** All eight Web Functions had a p50 of 5-6ms. Hono had the
+  tightest p99 (19.9ms) and vanilla the widest (29.1ms). Next.js & NestJS were about 1-2ms behind the rest on `/` &
+  `/api` (p50 7ms against 5-6ms), but that's the whole spread at the median.
+- **Middy added nothing measurable over a plain handler.** The two Event Functions were all but identical: both had a
+  p50 of 13.9ms & a p99 of 30.3ms.
+- **Every function served every request.** All ten returned 100% `200`s across ~4,700 requests each, with no `429`s now
+  the concurrency limits are gone.
+- **`/` & `/api` had wider tails than `/logo.png` on every Web Function** (p95 15-19ms against 6-9ms). Each virtual user
+  makes `/` or `/api` as its first request & `/logo.png` as its second, so the logo most likely benefits from an
+  already open connection, rather than being cheaper to serve.
+- **Most targets had a slow outlier, most likely a cold start.** NestJS had the highest max (588ms, on `/api`), then h3
+  (554ms), Express (518ms), Hono (496ms), Koa (485ms), vanilla (478ms), Middy (471ms) & `basic-event` (406ms). Fastify
+  (72ms) & Next.js (122ms) had none, as in the previous run. Which targets show one depends on whether a request lands
+  on a new environment, so treat them as indicative, not a benchmark.
 
 ```
 Results (response times in ms)
 
-Target         Result  Requests  Status codes    Errors  VUs failed  p50   p95   p99    Max
--------------  ------  --------  --------------  ------  ----------  ----  ----  -----  ---
-BasicEventUrl  FAIL    4707      200x4705 429x2  2       2           89.1  96.6  106.7  359
-VanillaUrl     PASS    4689      200x4689        0       0           80.6  85.6  90.9   479
-ExpressUrl     PASS    4663      200x4663        0       0           80.6  85.6  90.9   554
-FastifyUrl     PASS    4691      200x4691        0       0           80.6  85.6  89.1   516
-KoaUrl         PASS    4726      200x4726        0       0           80.6  85.6  90.9   451
-HonoUrl        PASS    4717      200x4717        0       0           80.6  85.6  90.9   485
-H3Url          PASS    4677      200x4677        0       0           80.6  85.6  90.9   472
-NextjsUrl      PASS    4680      200x4680        0       0           80.6  85.6  94.6   949
-NestjsUrl      PASS    4741      200x4741        0       0           80.6  83.9  89.1   116
+Target         Result  Requests  Status codes  Errors  VUs failed  p50   p95   p99   Max
+-------------  ------  --------  ------------  ------  ----------  ----  ----  ----  ---
+BasicEventUrl  PASS    4702      200x4702      0       0           13.9  23.8  30.3  406
+MiddyUrl       PASS    4699      200x4699      0       0           13.9  22.9  30.3  471
+VanillaUrl     PASS    4711      200x4711      0       0           6     16    29.1  478
+ExpressUrl     PASS    4750      200x4750      0       0           5     16    24.8  518
+FastifyUrl     PASS    4725      200x4725      0       0           5     18    23.8  72
+KoaUrl         PASS    4751      200x4751      0       0           5     16    21.1  485
+HonoUrl        PASS    4692      200x4692      0       0           5     16    19.9  496
+H3Url          PASS    4661      200x4661      0       0           5     15    21.1  554
+NextjsUrl      PASS    4665      200x4665      0       0           6     18    24.8  122
+NestjsUrl      PASS    4677      200x4677      0       0           6     16    21.1  588
 
 Response times by route (p50 / p95 / p99 / max, in ms)
 
-Target         index                      logo                        api
--------------  -------------------------  --------------------------  -------------------------
-BasicEventUrl  87.4 / 94.6 / 102.5 / 359  92.8 / 100.5 / 165.7 / 179  87.4 / 92.8 / 100.5 / 120
-VanillaUrl     80.6 / 85.6 / 92.8 / 479   80.6 / 82.3 / 87.4 / 118    80.6 / 85.6 / 94.6 / 106
-ExpressUrl     80.6 / 85.6 / 90.9 / 554   80.6 / 83.9 / 87.4 / 107    80.6 / 85.6 / 92.8 / 101
-FastifyUrl     80.6 / 85.6 / 90.9 / 311   80.6 / 82.3 / 89.1 / 125    80.6 / 85.6 / 89.1 / 516
-KoaUrl         80.6 / 85.6 / 96.6 / 109   80.6 / 82.3 / 87.4 / 108    80.6 / 85.6 / 89.1 / 451
-HonoUrl        80.6 / 85.6 / 92.8 / 485   80.6 / 82.3 / 87.4 / 101    80.6 / 85.6 / 92.8 / 114
-H3Url          80.6 / 85.6 / 90.9 / 472   80.6 / 83.9 / 89.1 / 113    80.6 / 85.6 / 90.9 / 127
-NextjsUrl      82.3 / 87.4 / 94.6 / 949   80.6 / 83.9 / 89.1 / 106    82.3 / 87.4 / 94.6 / 180
-NestjsUrl      80.6 / 85.6 / 92.8 / 116   80.6 / 82.3 / 87.4 / 114    80.6 / 85.6 / 89.1 / 113
+Target         index                     logo                      api
+-------------  ------------------------  ------------------------  ------------------------
+BasicEventUrl  12.1 / 21.1 / 25.8 / 406  16.9 / 25.8 / 34.1 / 68   12.1 / 21.1 / 24.8 / 42
+MiddyUrl       12.1 / 19.1 / 23.8 / 50   16.9 / 24.8 / 32.8 / 153  12.1 / 19.1 / 26.8 / 471
+VanillaUrl     6 / 16.9 / 30.3 / 45      5 / 7.9 / 10.1 / 30       6 / 18 / 30.9 / 478
+ExpressUrl     6 / 18 / 30.3 / 518       5 / 7 / 8.9 / 26          6 / 18 / 27.9 / 47
+FastifyUrl     6 / 19.1 / 24.8 / 49      5 / 8.9 / 10.1 / 25       6 / 19.1 / 25.8 / 72
+KoaUrl         5 / 16.9 / 22 / 485       4 / 6 / 7.9 / 29          5 / 16.9 / 23.8 / 33
+HonoUrl        6 / 16.9 / 21.1 / 56      4 / 7 / 7.9 / 32          6 / 16.9 / 22 / 496
+H3Url          5 / 16 / 22 / 554         4 / 7 / 7.9 / 24          5 / 16 / 24.8 / 52
+NextjsUrl      7 / 19.1 / 26.8 / 122     5 / 7.9 / 10.1 / 36       7 / 19.1 / 22.9 / 121
+NestjsUrl      7 / 18 / 21.1 / 76        5 / 7.9 / 10.1 / 36       7 / 18 / 21.1 / 588
 ```
 
 ### Tearing down
 
 ```sh
-$ sam delete --stack-name lambda-web-function-poc
-$ sam delete --stack-name lambda-web-function-poc-base
+$ mise run deploy:destroy
 ```
+
+This runs `sam delete` on the service stack, then the base stack, asking before deleting each one.
 
 The bucket is retained (`DeletionPolicy: Retain`), so empty it (every object version) & delete it manually.
 
@@ -209,7 +240,7 @@ mise-tasks/
   test/report       mise run test:report
 public/
   logo.png          Shared static assets, symlinked into each app as `public/`
-mise.toml           Tool versions
+mise.toml           Tool versions & the deploy:destroy task
 samconfig.toml      SAM config, `base` & `default` envs
 ```
 

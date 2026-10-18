@@ -10,6 +10,7 @@ sam deploy --config-env base
 # Print an output of the base stack
 base_output() {
   aws cloudformation describe-stacks \
+    --region us-east-1 \
     --stack-name lambda-web-function-poc-base \
     --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" \
     --output text
@@ -24,6 +25,7 @@ pnpm -r --if-present package
 # Upload apps/<app>/function.zip to <app>/function.zip & print the new object version
 upload() {
   aws s3api put-object \
+    --region us-east-1 \
     --bucket "$BUCKET" \
     --key "$1/function.zip" \
     --body "apps/$1/function.zip" \

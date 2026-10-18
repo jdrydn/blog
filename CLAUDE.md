@@ -12,6 +12,7 @@ pnpm install
 pnpm -r build               # Build every app
 pnpm -r --if-present package  # Zip every app into apps/<app>/function.zip
 mise run deploy             # Deploy base stack, build, package, upload & deploy (real AWS resources)
+mise run deploy:destroy     # sam delete the service & base stacks (asks first)
 mise run test                # Artillery (test/runner.yml) against every URL output, results in test/artifacts/
 mise run test:report         # Summarise the results in test/artifacts/ again
 
@@ -23,7 +24,7 @@ pnpm build && pnpm start
 cd apps/<app> && ../../node_modules/.bin/tsc -p .
 
 # Validate templates
-sam validate --template-file infra/service.yml --region <region>
+sam validate --template-file infra/service.yml
 ```
 
 There are no tests. To verify a change, build, package & run the app from its unzipped `function.zip` in a directory
@@ -31,7 +32,7 @@ with no `node_modules`, with `AWS_LAMBDA_HTTP_ENDPOINT=127.0.0.1:<port>`, then `
 
 ## Rules
 
-- **Never run `mise run deploy`, `sam deploy` or `sam delete` without asking.** They create or destroy real AWS
+- **Never run `mise run deploy`, `mise run deploy:destroy`, `sam deploy` or `sam delete` without asking.** They create or destroy real AWS
   resources.
 - **Keep every app in step.** Every app (including `basic-event` & `middy`, through their Function URLs) serves the same three routes
   (`/`, `/api` returning `{ message, framework, time }`, `/logo.png`) with the same index page. A change to one usually
@@ -68,7 +69,7 @@ with no `node_modules`, with `AWS_LAMBDA_HTTP_ENDPOINT=127.0.0.1:<port>`, then `
   in `infra/service.yml`, an `upload` line in `mise-tasks/deploy`, and its `<App>Url` in the list in
   `mise-tasks/test/_default`.
 - **Adding an event app** means: an `apps/<app>` package with `build` & `package` scripts, a `public` symlink, an
-  `AWS::Serverless::Function` (copy `BasicEventFunction`, so it has the same limits) & URL output in
+  `AWS::Serverless::Function` (copy `BasicEventFunction`, so it has the same memory) & URL output in
   `infra/service.yml`, and its `<App>Url` in the list in `mise-tasks/test/_default`. SAM uploads its zip, so it needs no
   `upload` line.
 

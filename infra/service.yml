@@ -48,8 +48,6 @@ Resources:
       # As close to a Web Function environment's 2 vCPUs as the account allows: 2 vCPUs, at about 1.7 vCPUs of
       # compute (Lambda allocates 1 vCPU of compute per 1,769 MB, but caps memory at 3,008 MB until you ask for more)
       MemorySize: 3008
-      # One request per environment, so 4 matches the Web Functions' 2 environments x 2 requests
-      ReservedConcurrentExecutions: 4
       FunctionUrlConfig:
         AuthType: NONE
 
@@ -64,7 +62,6 @@ Resources:
       Role: !Ref ExecutionRoleArn
       Timeout: 10
       MemorySize: 3008
-      ReservedConcurrentExecutions: 4
       FunctionUrlConfig:
         AuthType: NONE
 
@@ -74,9 +71,6 @@ Resources:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
       ExecutionRoleArn: !Ref ExecutionRoleArn
-      MaxConcurrencyPerEnvironment: 2
-      ScalingConfig:
-        MaxEnvironments: 2
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: express/function.zip
@@ -89,9 +83,6 @@ Resources:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
       ExecutionRoleArn: !Ref ExecutionRoleArn
-      MaxConcurrencyPerEnvironment: 2
-      ScalingConfig:
-        MaxEnvironments: 2
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: fastify/function.zip
@@ -104,9 +95,6 @@ Resources:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
       ExecutionRoleArn: !Ref ExecutionRoleArn
-      MaxConcurrencyPerEnvironment: 2
-      ScalingConfig:
-        MaxEnvironments: 2
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: h3/function.zip
@@ -119,9 +107,6 @@ Resources:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
       ExecutionRoleArn: !Ref ExecutionRoleArn
-      MaxConcurrencyPerEnvironment: 2
-      ScalingConfig:
-        MaxEnvironments: 2
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: hono/function.zip
@@ -134,9 +119,6 @@ Resources:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
       ExecutionRoleArn: !Ref ExecutionRoleArn
-      MaxConcurrencyPerEnvironment: 2
-      ScalingConfig:
-        MaxEnvironments: 2
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: koa/function.zip
@@ -149,9 +131,6 @@ Resources:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
       ExecutionRoleArn: !Ref ExecutionRoleArn
-      MaxConcurrencyPerEnvironment: 2
-      ScalingConfig:
-        MaxEnvironments: 2
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: nestjs/function.zip
@@ -164,9 +143,6 @@ Resources:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
       ExecutionRoleArn: !Ref ExecutionRoleArn
-      MaxConcurrencyPerEnvironment: 2
-      ScalingConfig:
-        MaxEnvironments: 2
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: nextjs/function.zip
@@ -179,9 +155,6 @@ Resources:
       Runtime: nodejs24.x
       AuthType: ApplicationManaged
       ExecutionRoleArn: !Ref ExecutionRoleArn
-      MaxConcurrencyPerEnvironment: 2
-      ScalingConfig:
-        MaxEnvironments: 2
       CodeUri:
         Bucket: !Ref CodeBucket
         Key: vanilla/function.zip

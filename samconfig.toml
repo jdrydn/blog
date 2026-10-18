@@ -1,5 +1,12 @@
 version = 0.1
 
+# Every sam command (deploy, delete, validate...) runs in us-east-1, the same as the aws & artillery commands in mise-tasks/
+[default.global.parameters]
+region = "us-east-1"
+
+[base.global.parameters]
+region = "us-east-1"
+
 # sam deploy --config-env base
 # Creates the versioned S3 bucket that holds every deployment package, & the functions' execution role
 [base.deploy.parameters]

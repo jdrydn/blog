@@ -3,3 +3,11 @@ node = "24"
 pnpm = "10.27.0"
 aws-cli = "2"
 aws-sam = "latest"
+
+# The service stack goes first, as it uses the base stack's bucket & role. SAM asks before deleting each stack.
+[tasks."deploy:destroy"]
+description = "Delete the service & base stacks"
+run = [
+  "sam delete --stack-name lambda-web-function-poc",
+  "sam delete --stack-name lambda-web-function-poc-base",
+]

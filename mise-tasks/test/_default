@@ -8,6 +8,7 @@ rm -rf "$ARTIFACTS" && mkdir -p "$ARTIFACTS"
 
 # Every `<Name>Url` output of the service stack, as `<Name>Url<TAB><url>` lines
 URLS=$(aws cloudformation describe-stacks \
+  --region us-east-1 \
   --stack-name lambda-web-function-poc \
   --query "Stacks[0].Outputs[?ends_with(OutputKey, 'Url')].[OutputKey, OutputValue]" \
   --output text)
